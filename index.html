@@ -1,90 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
-  <meta name="theme-color" content="#6c4df5">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>📦 Estoque de Materiais Headset</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#6c4df5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>📦 Estoque Headset (PWA)</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" sizes="192x192" href="icon-192.png">
-  <link rel="icon" sizes="512x512" href="icon-512.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <style>
-    :root{ --fs:100%; --violet:#6a53f2; --ink:#0f1431; }
+    :root{ --bg:#f7f7ff; --ring:#7c6cf7; --ink:#0e1133; }
     *{ box-sizing:border-box }
-    html{ font-size:var(--fs) }
+    html,body{ height:100%; margin:0; }
     body{
-      margin:0; background:#ffffff; color:var(--ink);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
-      font-weight:700;
+      background:radial-gradient(1200px 600px at 10% -10%, rgba(124,108,247,.12), transparent 50%) no-repeat, #fff;
+      color:var(--ink); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; 
     }
-    .wrap{ max-width:1100px; margin:0 auto; padding:12px }
-    header{ display:flex; align-items:center; justify-content:center; gap:12px; margin:10px 0 8px }
-    h1{ margin:0; font-size:clamp(1.6rem, 3vw + 1rem, 2.4rem); color:#1f39c4 }
-    .brand{ display:flex; align-items:center; gap:10px }
-    .logo{ width:56px; height:56px; border-radius:12px; object-fit:cover }
-    .sub{ text-align:center; color:#8b8fb8; font-weight:600; font-size:.95rem }
+    .wrap{ height:100%; display:flex; flex-direction:column; }
+    header{
+      padding:14px 16px; display:flex; align-items:center; gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px;
+    }
+    .dot{
+      width:28px; height:28px; border-radius:10px;
+      background: linear-gradient(135deg, #ff58b0, #7c6cf7);
+      box-shadow: 0 6px 24px rgba(124,108,247,.35);
+    }
+    .t{ font-size:18px }
+    .hint{ margin-left:auto; font-size:12px; color:#667; opacity:.9 }
+    .frame{
+      position:relative; flex:1; min-height:0; margin:0 12px 12px; border-radius:16px; overflow:hidden;
+      border:1px solid rgba(124,108,247,.15); box-shadow: 0 14px 42px rgba(124,108,247,.12);
+      background:#fff;
+    }
+    iframe{ width:100%; height:100%; border:0; display:block; background:#fff; }
 
-    .zoom{ position:sticky; top:8px; display:flex; gap:8px; justify-content:flex-end; margin:8px 0 10px; z-index:5 }
-    .zbtn{
-      font-size:.8rem; padding:.28rem .5rem; border-radius:10px;
-      border:2px solid var(--violet); color:var(--violet); background:#fff; cursor:pointer;
+    /* fallback quando iframe não carrega */
+    .fallback{
+      position:absolute; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+      background:linear-gradient(180deg,#fff, #fbfbff);
     }
-
-    .frameBox{
-      border:1px solid #efe9ff; border-radius:16px; overflow:hidden;
-      box-shadow:0 18px 48px rgba(106,83,242,.12), 0 6px 18px rgba(106,83,242,.10);
+    .fallback.show{ display:flex; }
+    .msg{ font-size:15px; color:#445; }
+    .btn{
+      padding:10px 16px; border-radius:12px; border:2px solid var(--ring); background:#fff; color:var(--ring);
+      font-weight:700; cursor:pointer;
+      box-shadow: 0 8px 28px rgba(124,108,247,.18);
     }
-    iframe{
-      width:100%; height:calc(100vh - 180px); border:0; display:block; background:#fff;
-    }
-
-    footer{ text-align:center; color:#8b8fb8; font-size:.9rem; font-weight:600; padding:14px 0 }
-    footer b{ color:#0d0d44 }
+    footer{ padding:10px 14px; text-align:center; font-size:12px; color:#7a7fa8; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <img class="logo" src="logo.png" alt="Logo">
-        <h1>Estoque de Materiais Headset</h1>
+        <div class="dot"></div>
+        <div class="t">Estoque Headset</div>
       </div>
+      <div class="hint">PWA — instalar pela opção “Adicionar à tela inicial”.</div>
     </header>
 
-    <div class="sub">Desenvolvido por Alexandre Cavalcante — HD TECH —</div>
+    <div class="frame">
+      <iframe id="app" 
+              src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec"
+              referrerpolicy="no-referrer" loading="eager" allow="clipboard-write">
+      </iframe>
 
-    <div class="zoom">
-      <button class="zbtn" onclick="ajustarFonte(-1)">A-</button>
-      <button class="zbtn" onclick="ajustarFonte(1)">A+</button>
+      <div id="fallback" class="fallback">
+        <div class="msg">Não foi possível carregar o app embutido.</div>
+        <button class="btn" id="openNew">Abrir em nova aba</button>
+      </div>
     </div>
 
-    <div class="frameBox">
-      <!-- 🔗 COLE AQUI SUA URL DO GAS (exec) -->
-      <iframe id="app" src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec" loading="eager"></iframe>
-    </div>
-
-    <footer>© <b>HD TECH</b></footer>
+    <footer>© HD TECH</footer>
   </div>
 
   <script>
-    // Zoom de fonte (só afeta o shell do GitHub, não o conteúdo do iframe)
-    let _fs = Number(localStorage.getItem('eh_fs')||'100');
-    document.documentElement.style.setProperty('--fs', _fs + '%');
-    function ajustarFonte(step){
-      _fs = Math.min(240, Math.max(70, _fs + step*10));
-      document.documentElement.style.setProperty('--fs', _fs + '%');
-      localStorage.setItem('eh_fs', String(_fs));
-    }
-
-    // PWA
-    if ('serviceWorker' in navigator){
+    // Service Worker para PWA
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
     }
+
+    // Fallback caso o iframe não carregue (bloqueio de rede, etc.)
+    const IFRAME_URL = 'https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec';
+    const frame = document.getElementById('app');
+    const fallback = document.getElementById('fallback');
+    const btn = document.getElementById('openNew');
+    let loaded = false;
+
+    frame.addEventListener('load', ()=>{ loaded = true; });
+    setTimeout(()=>{ if(!loaded){ fallback.classList.add('show'); } }, 4000);
+    btn.addEventListener('click', ()=>{ window.open(IFRAME_URL, '_blank'); });
   </script>
 </body>
 </html>
