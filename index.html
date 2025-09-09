@@ -6,7 +6,14 @@
   <meta name="theme-color" content="#6c4df5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>📦 Estoque de Materiais Headset</title>
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
   <style>
     :root{
       --fs: 100%;
@@ -23,18 +30,22 @@
       font-weight:700;
     }
     .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    header{display:flex;align-items:center;gap:16px;margin:18px 0 6px;justify-content:center;flex-direction:column}
+
+    header{display:flex;align-items:center;gap:12px;margin:18px 0 6px;justify-content:center;flex-direction:column}
+    .logo{width:104px;height:104px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow)}
     h1{
-      margin:0; line-height:1.05; text-align:center;
+      margin:8px 0 0; line-height:1.05; text-align:center;
       font-size: clamp(1.6rem, 3vw + 1rem, 2.6rem);
       color:#1f39c4; text-shadow: 0 6px 18px rgba(106,83,242,.35);
     }
-    .sub{color:#8b8fb8; font-weight:600; font-size:.92rem; text-align:center; margin-top:6px}
-    .logo{width:104px;height:104px;border-radius:50%; object-fit:cover}
+    .watermark{
+      color:#8b8fb8; font-weight:600; font-size:.92rem; text-align:center;
+      margin:6px 0 0; opacity:.85
+    }
 
     .zoom{position:sticky;top:8px;display:flex;gap:8px;justify-content:flex-end;margin:8px 0 12px;z-index:5}
     .zbtn{
-      font-size:.9rem; padding:.35rem .55rem; border-radius:12px;
+      font-size:.86rem; padding:.32rem .52rem; border-radius:12px;
       border:2px solid var(--violet); color:var(--violet); background:#fff;
       cursor:pointer; box-shadow:var(--shadow);
     }
@@ -80,9 +91,10 @@
 <body>
   <div class="wrap">
     <header>
+      <!-- use logo.png no repo -->
       <img class="logo" src="logo.png" alt="Headset Logo">
       <h1>Estoque de Materiais Headset</h1>
-      <div class="sub">Desenvolvido por Alexandre Cavalcante — HD TECH —</div>
+      <div class="watermark">Desenvolvido por Alexandre Cavalcante — HD TECH —</div>
     </header>
 
     <div class="zoom">
@@ -107,9 +119,10 @@
   <div class="toast" id="toast">Pronto!</div>
 
 <script>
-  /* 🔗 COLE AQUI SUA URL DO GAS /exec */
-  const API_BASE = "https://script.google.com/macros/s/AKfycbytGyMj74EeKikIIHscb-WyMbChULlCQL2MOlgtoPshkkD9lebUhJDiTEEUpm_YXFYZFQ/exec"; // ex.: https://script.google.com/macros/s/AAA.../exec
+  /* 🔗 SUA URL /exec DO GAS (pode trocar a qualquer momento) */
+  const API_BASE = "https://script.google.com/macros/s/AKfycbytGyMj74EeKikIIHscb-WyMbChULlCQL2MOlgtoPshkkD9lebUhJDiTEEUpm_YXFYZFQ/exec";
 
+  // ====== util ======
   const $ = s => document.querySelector(s);
   const elProdutos = $('#produtos');
   const elEstoque  = $('#estoque');
@@ -135,6 +148,7 @@
     return 'b-ok';
   }
 
+  // ====== UI ======
   function productRow(it){
     const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
     return `
@@ -180,39 +194,34 @@
   }
   function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
 
-  // ======= API =======
+  // ====== API ======
   async function listar(){
-    const url = API_BASE + "?act=listar";
-    const resp = await fetch(url, { cache:'no-store' });
+    const resp = await fetch(API_BASE + "?act=listar", { cache:'no-store' });
     if (!resp.ok) throw new Error("HTTP " + resp.status);
 
     const ct = resp.headers.get('content-type') || '';
     if (!ct.includes('application/json')) {
-      const text = await resp.text(); // protege contra HTML
+      const text = await resp.text(); // protege contra retorno HTML
       throw new Error("Resposta não-JSON: " + text.slice(0,120));
     }
     return resp.json();
   }
   async function enviarMov(payload){
     const resp = await fetch(API_BASE + "?act=movimentar", {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload),
-      cache: 'no-store'
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload), cache:'no-store'
     });
     return resp.json();
   }
   async function enviarObs(payload){
     const resp = await fetch(API_BASE + "?act=observacao", {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload),
-      cache: 'no-store'
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload), cache:'no-store'
     });
     return resp.json();
   }
 
-  // ======= Ações =======
+  // ====== Ações ======
   async function carregar(){
     showOverlay(true);
     try{
@@ -272,7 +281,7 @@
 
   (function init(){ carregar(); })();
 
-  // PWA
+  // PWA: registra SW
   if ('serviceWorker' in navigator){
     navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
   }
