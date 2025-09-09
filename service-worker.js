@@ -1,47 +1,42 @@
-// v4 – SW simples: cacheia app shell e JAMAIS cacheia as chamadas ao GAS
-const CACHE = "estoque-v4";
-const APP_SHELL = [
+// SW bem simples: cache do shell (HTML/manifest/ícones). O conteúdo do iframe (GAS) fica sempre online.
+const CACHE = "estoque-headset-shell-v1";
+const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png",
-  "./logo.png"
+  "./icon-512.png"
 ];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(APP_SHELL)));
+self.addEventListener("install", e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (e) => {
+self.addEventListener("activate", e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k === CACHE ? null : caches.delete(k))))
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (e) => {
+// Network-first para o HTML (melhor atualização), cache-first para assets.
+self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
-
-  // Não intercepta a API do GAS (sem cache)
-  if (url.hostname.endsWith("script.google.com")) return;
-
-  // Cache → rede (somente assets locais)
-  e.respondWith(
-    caches.match(e.request).then((cached) => {
-      return (
-        cached ||
-        fetch(e.request).then((resp) => {
-          if (e.request.method === "GET" && url.origin === location.origin) {
-            const clone = resp.clone();
-            caches.open(CACHE).then((c) => c.put(e.request, clone));
-          }
-          return resp;
-        })
-      );
-    })
-  );
+  const isAsset = ASSETS.some(a => url.pathname.endsWith(a.replace("./","/")));
+  if (isAsset) {
+    e.respondWith(
+      caches.match(e.request).then(r => r || fetch(e.request))
+    );
+  } else if (url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")) {
+    e.respondWith(
+      fetch(e.request).then(r => {
+        const copy = r.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+        return r;
+      }).catch(() => caches.match(e.request))
+    );
+  }
 });
