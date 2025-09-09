@@ -1,5 +1,5 @@
-// service-worker.js
-const CACHE_VERSION = "v1-boot-clean";
+// v4 – SW simples: cacheia app shell e JAMAIS cacheia as chamadas ao GAS
+const CACHE = "estoque-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,38 +9,39 @@ const APP_SHELL = [
   "./logo.png"
 ];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then(c => c.addAll(APP_SHELL)));
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k)))
+      Promise.all(keys.map(k => (k === CACHE ? null : caches.delete(k))))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
+self.addEventListener("fetch", (e) => {
+  const url = new URL(e.request.url);
 
-  // Não intercepta chamadas ao GAS
-  if (url.hostname.endsWith("script.google.com") || url.hostname.endsWith("googleusercontent.com")) {
-    return;
-  }
+  // Não intercepta a API do GAS (sem cache)
+  if (url.hostname.endsWith("script.google.com")) return;
 
-  // Cache-first para os assets locais
-  if (url.origin === self.location.origin) {
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        return cached || fetch(event.request).then(resp => {
-          const copy = resp.clone();
-          caches.open(CACHE_VERSION).then(cache => cache.put(event.request, copy));
+  // Cache → rede (somente assets locais)
+  e.respondWith(
+    caches.match(e.request).then((cached) => {
+      return (
+        cached ||
+        fetch(e.request).then((resp) => {
+          if (e.request.method === "GET" && url.origin === location.origin) {
+            const clone = resp.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, clone));
+          }
           return resp;
-        });
-      })
-    );
-  }
+        })
+      );
+    })
+  );
 });
