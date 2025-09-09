@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#6c4df5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>📦 Estoque de Materiais Headset</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root{
+      --fs: 100%;
+      --ink:#0f1431; --ink2:#636aa0;
+      --panel:#ffffff; --stroke:#efe9ff;
+      --violet:#6a53f2; --accent:#22eacb; --pink:#ff5bb0;
+      --shadow: 0 18px 48px rgba(106,83,242,.18), 0 6px 18px rgba(106,83,242,.12);
+    }
+    *{box-sizing:border-box}
+    html{font-size: var(--fs);}
+    body{
+      margin:0; padding:0; background:#fff; color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
+      font-weight:700;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;gap:16px;margin:18px 0 6px;justify-content:center;flex-direction:column}
+    h1{
+      margin:0; line-height:1.05; text-align:center;
+      font-size: clamp(1.6rem, 3vw + 1rem, 2.6rem);
+      color:#1f39c4; text-shadow: 0 6px 18px rgba(106,83,242,.35);
+    }
+    .sub{color:#8b8fb8; font-weight:600; font-size:.92rem; text-align:center; margin-top:6px}
+    .logo{width:104px;height:104px;border-radius:50%; object-fit:cover}
+
+    .zoom{position:sticky;top:8px;display:flex;gap:8px;justify-content:flex-end;margin:8px 0 12px;z-index:5}
+    .zbtn{
+      font-size:.9rem; padding:.35rem .55rem; border-radius:12px;
+      border:2px solid var(--violet); color:var(--violet); background:#fff;
+      cursor:pointer; box-shadow:var(--shadow);
+    }
+
+    .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow)}
+    .panel h2{margin:0 0 10px;text-align:center;color:#6a53f2;font-size:1.6rem}
+
+    .card{background:#fff;border:1px solid #ececff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+    .code{font-size:1.05rem}
+    .name{font-size:1.35rem; color:#2a2a55}
+    .muted{font-size:.95rem; color:#6b72a8; margin-top:4px}
+
+    .qty,.tipo,.obs{
+      border:1px solid #d7d7f5;border-radius:12px;
+      padding:.55rem .75rem; font-size:1.02rem; background:#fff;
+      box-shadow:0 6px 14px rgba(106,83,242,.10);
+    }
+    .qty{min-width:72px}
+    .obs{min-width:16rem;flex:1}
+
+    .btn{border:0;border-radius:12px;padding:.58rem .9rem;color:#fff;font-size:1.02rem; cursor:pointer;}
+    .btn.ok{background:linear-gradient(135deg,#7d89ff,#5d6bff)}
+    .btn.in{background:linear-gradient(135deg,var(--accent),#10bba1)}
+    .btn.out{background:linear-gradient(135deg,var(--pink),#ff2e63)}
+    .btn:active{transform:scale(.98)}
+
+    .badge{border-radius:999px;padding:.55rem .9rem;font-size:1rem;background:#f7f7ff;border:2px solid #d9d6ff}
+    .b-ok{border-color:#24b07a}
+    .b-warn{border-color:#f5b942}
+    .b-danger{border-color:#ff2e63}
+
+    .overlay{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:9999}
+    .spinner{width:88px;height:88px;border-radius:999px;border:8px solid var(--accent);border-top-color:var(--violet);animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#fff;border:1px solid var(--stroke);padding:.7rem 1rem;border-radius:12px;display:none;z-index:10000;box-shadow:var(--shadow)}
+
+    footer{text-align:center;margin:20px 0;color:#8b8fb8;font-size:.9rem;font-weight:600}
+    footer b{color:#0d0d44}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img class="logo" src="logo.png" alt="Headset Logo">
+      <h1>Estoque de Materiais Headset</h1>
+      <div class="sub">Desenvolvido por Alexandre Cavalcante — HD TECH —</div>
+    </header>
+
+    <div class="zoom">
+      <button class="zbtn" onclick="ajustarFonte(-1)">A-</button>
+      <button class="zbtn" onclick="ajustarFonte(1)">A+</button>
+    </div>
+
+    <section class="panel">
+      <h2>Produtos</h2>
+      <div id="produtos"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Estoque Atual</h2>
+      <div id="estoque"></div>
+    </section>
+
+    <footer>© HD TECH</footer>
+  </div>
+
+  <div class="overlay" id="overlay"><div class="spinner"></div></div>
+  <div class="toast" id="toast">Pronto!</div>
+
+<script>
+  /* 🔗 COLE AQUI SUA URL DO GAS /exec */
+  const API_BASE = "PASTE_AQUI_SUA_URL_EXEC"; // ex.: https://script.google.com/macros/s/AAA.../exec
+
+  const $ = s => document.querySelector(s);
+  const elProdutos = $('#produtos');
+  const elEstoque  = $('#estoque');
+  const overlay    = $('#overlay');
+  const toast      = $('#toast');
+
+  let _fs = Number(localStorage.getItem('eh_fs')||'100');
+  document.documentElement.style.setProperty('--fs', _fs + '%');
+  function ajustarFonte(step){
+    _fs = Math.min(240, Math.max(70, _fs + step*10));
+    document.documentElement.style.setProperty('--fs', _fs + '%');
+    localStorage.setItem('eh_fs', String(_fs));
+  }
+  function showOverlay(v){ overlay.style.display = v ? 'flex' : 'none'; }
+  function showToast(msg){ toast.textContent = msg||'Pronto!'; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1400); }
+
+  function classByLevel(estoque, minimo){
+    estoque=Number(estoque||0); minimo=Number(minimo||0);
+    if(minimo>0){
+      if(estoque <= 0.25*minimo) return 'b-danger';
+      if(estoque <  minimo)      return 'b-warn';
+    }
+    return 'b-ok';
+  }
+
+  function productRow(it){
+    const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+    return `
+      <div class="card" id="cardL-${it.codigo}">
+        <div class="row">
+          <div>
+            <div class="name">${it.nome}</div>
+            <div class="code">Cód: ${it.codigo}</div>
+            <div class="muted">Estoque: <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
+          </div>
+          <div class="row">
+            <select class="tipo" id="tipo-${it.codigo}">
+              <option value="Unidade">Unidade</option>
+              <option value="CX">CX</option>
+              <option value="Litro">Litro</option>
+            </select>
+            <select class="qty"  id="qty-${it.codigo}">${qtdOpts}</select>
+            <input  class="obs"  id="obs-${it.codigo}" placeholder="Obs/Justificativa"/>
+            <button class="btn ok" onclick="clickOK('${it.codigo}')">OK</button>
+            <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
+            <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
+          </div>
+        </div>
+      </div>`;
+  }
+  function stockRow(it){
+    return `
+      <div class="card" id="card-${it.codigo}">
+        <div class="row">
+          <div>
+            <div class="name">${it.nome}</div>
+            <div class="code">Cód: ${it.codigo}</div>
+          </div>
+          <div class="badge ${classByLevel(it.estoque, it.minimo)}" id="badge-${it.codigo}">
+            Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+  function render(items){
+    elProdutos.innerHTML = items.map(productRow).join('');
+    elEstoque.innerHTML  = items.map(stockRow).join('');
+  }
+  function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
+
+  // ======= API =======
+  async function listar(){
+    const url = API_BASE + "?act=listar";
+    const resp = await fetch(url, { cache:'no-store' });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+
+    const ct = resp.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      const text = await resp.text(); // protege contra HTML
+      throw new Error("Resposta não-JSON: " + text.slice(0,120));
+    }
+    return resp.json();
+  }
+  async function enviarMov(payload){
+    const resp = await fetch(API_BASE + "?act=movimentar", {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
+    return resp.json();
+  }
+  async function enviarObs(payload){
+    const resp = await fetch(API_BASE + "?act=observacao", {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
+    return resp.json();
+  }
+
+  // ======= Ações =======
+  async function carregar(){
+    showOverlay(true);
+    try{
+      const data = await listar();
+      window._items = (data||[]).map(x=>Object.assign({},x));
+      render(window._items);
+    }catch(e){
+      alert("Erro ao carregar itens: " + (e.message||e));
+    }
+    showOverlay(false);
+  }
+
+  async function clickMov(tipo, codigo){
+    const qtdSel  = document.getElementById('qty-'+codigo);
+    const tipoSel = document.getElementById('tipo-'+codigo);
+    const obsInp  = document.getElementById('obs-'+codigo);
+
+    const qtd     = Number(qtdSel?.value || 1);
+    const unidade = String(tipoSel?.value || 'Unidade');
+    const obs     = String(obsInp?.value || '');
+
+    showOverlay(true);
+    try{
+      const res = await enviarMov({ tipo, codigo, qtd, unidade, obs, user: "" });
+      if (!res.ok) throw new Error(res.error||'Falha');
+      const it = findItem(codigo);
+      if (it){ it.estoque = res.estoque; }
+      const l = document.getElementById('left-'+codigo);
+      const e = document.getElementById('est-'+codigo);
+      const b = document.getElementById('badge-'+codigo);
+      if (l) l.textContent = res.estoque;
+      if (e) e.textContent = res.estoque;
+      if (b && it) b.className = 'badge ' + classByLevel(res.estoque, it.minimo||0);
+      showToast('Pronto!');
+    }catch(err){
+      alert('Erro: '+ err.message);
+    }
+    showOverlay(false);
+  }
+
+  async function clickOK(codigo){
+    const obsInp  = document.getElementById('obs-'+codigo);
+    const obs     = String(obsInp?.value || '').trim();
+    if (!obs){ alert('Escreva uma observação.'); return; }
+
+    showOverlay(true);
+    try{
+      const res = await enviarObs({ codigo, obs, user: "" });
+      if (!res.ok) throw new Error(res.error||'Falha');
+      showToast('Observação registrada!');
+      obsInp.value = '';
+    }catch(err){
+      alert('Erro: '+ err.message);
+    }
+    showOverlay(false);
+  }
+
+  (function init(){ carregar(); })();
+
+  // PWA
+  if ('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  }
+</script>
+</body>
+</html>
