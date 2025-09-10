@@ -2,273 +2,46 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
-  <meta name="theme-color" content="#6c4df5">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#ffffff">
   <title>📦 Estoque de Materiais Headset</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="logo.png">
   <style>
-    :root{
-      --fs:100%;
-      --ink:#0f1431; --ink2:#636aa0;
-      --panel:#fff; --stroke:#ece9ff;
-      --violet:#6a53f2; --accent:#22eacb; --pink:#ff2e63;
-      --shadow:0 24px 64px rgba(106,83,242,.18),0 8px 24px rgba(106,83,242,.10);
-    }
+    :root{ --line:#ece9ff; --shadow:0 18px 48px rgba(106,83,242,.18), 0 6px 18px rgba(106,83,242,.12); }
     *{box-sizing:border-box}
-    html{font-size:var(--fs);height:100%}
-    body{
-      margin:0;background:#fff;color:var(--ink);min-height:100%;
-      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial;
-      -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    }
-
-    .wrap{max-width:1100px;margin:0 auto;padding:16px;padding-left:calc(16px + env(safe-area-inset-left));padding-right:calc(16px + env(safe-area-inset-right));}
-
-    /* Header único */
+    html,body{height:100%}
+    body{margin:0;background:#fff;color:#0f1431;font:600 16px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
     .hero{
-      background:#6a53f2;
-      border-radius:28px;
-      color:#fff;
-      padding:24px 16px 28px;
-      box-shadow:var(--shadow);
-      text-align:center;
+      background:#fff;border:1px solid var(--line);border-radius:26px;padding:18px;margin:14px 0;box-shadow:var(--shadow);
+      display:flex;flex-direction:column;align-items:center;gap:10px;
     }
-    .hero .logo{width:104px;height:auto;display:block;margin:6px auto 10px}
-    .hero h1{
-      margin:6px 0 8px; line-height:1.12;
-      font-size: clamp(1.8rem, 3.6vw + 1rem, 3rem);
-      text-shadow: 0 10px 26px rgba(0,0,0,.18);
+    .logo{width:100px;height:auto}
+    h1{
+      margin:0;text-align:center;font-weight:900;letter-spacing:.2px;
+      font-size: clamp(26px, 3.6vw + 10px, 44px);
+      color:#2440ff;text-shadow:0 10px 30px rgba(106,83,242,.35);
     }
-    .hero .sub{
-      color:#eef; font-weight:600; font-size:1rem; max-width:880px; margin:0 auto 12px;
-    }
-    .zoom{display:flex; gap:12px; justify-content:center; margin-top:8px}
-    .zbtn{
-      font-size:1rem; padding:.5rem .9rem; border-radius:14px;
-      border:2px solid #d9d6ff; color:#fff; background:transparent; cursor:pointer;
-      backdrop-filter: blur(6px);
-    }
-
-    .panel{
-      background:var(--panel); border:1px solid var(--stroke);
-      border-radius:22px; padding:18px; margin:16px 0; box-shadow:var(--shadow)
-    }
-    .panel h2{margin:0 0 10px; text-align:center; color:#6a53f2; font-size:1.6rem}
-
-    .card{background:#fff;border:1px solid #ececff;border-radius:18px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-
-    .name{font-size:1.35rem;color:#2a2a55}
-    .code{font-size:1.02rem; color:#4b4f7a}
-    .muted{font-size:.95rem;color:#6b72a8;margin-top:4px}
-
-    .tipo,.qty,.obs{
-      border:1px solid #d7d7f5;border-radius:12px; background:#fff;
-      padding:.6rem .8rem; font-size:1.02rem;
-      box-shadow:0 8px 16px rgba(106,83,242,.10)
-    }
-    .qty{min-width:80px}
-    .obs{min-width:16rem;flex:1}
-
-    .btn{
-      border:0;border-radius:12px;padding:.65rem .95rem;color:#fff;font-size:1.02rem;cursor:pointer
-    }
-    .btn.ok{background:linear-gradient(135deg,#7d89ff,#5d6bff)}
-    .btn.in{background:linear-gradient(135deg,var(--accent),#10bba1)}
-    .btn.out{background:linear-gradient(135deg,var(--pink),#ff4b7d)}
-    .btn:active{transform:scale(.98)}
-
-    .badge{border-radius:999px;padding:.55rem .9rem;font-size:1rem;background:#f7f7ff;border:2px solid #d9d6ff}
-    .b-ok{border-color:#24b07a}
-    .b-warn{border-color:#f5b942}
-    .b-danger{border-color:#ff2e63}
-
-    .overlay{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:9999}
-    .spinner{width:90px;height:90px;border-radius:999px;border:8px solid var(--accent);border-top-color:#6a53f2;animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#fff;border:1px solid var(--stroke);padding:.7rem 1rem;border-radius:12px;display:none;z-index:10000;box-shadow:var(--shadow)}
-
-    footer{text-align:center;margin:24px 0;color:#8b8fb8;font-size:.9rem;font-weight:600}
+    .sub{color:#697099;text-align:center;max-width:760px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:10px;margin:14px 0;box-shadow:var(--shadow)}
+    iframe.app{width:100%; height: calc(100vh - 260px); border:0; border-radius:18px}
+    footer{text-align:center;margin:22px 0;color:#8b8fb8;font-weight:700}
     footer b{color:#0d0d44}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- HEADER ÚNICO -->
-    <section class="hero" role="banner" aria-label="Cabeçalho">
-      <img class="logo" src="logo.png" alt="Headset Brasil">
+    <section class="hero">
+      <img class="logo" src="./logo.png" alt="Logo">
       <h1>Estoque de Materiais Headset</h1>
-      <p class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação. Para registrar só uma observação, use o botão <b>OK</b>.</p>
-      <div class="zoom">
-        <button class="zbtn" id="btnMinus" aria-label="Diminuir fonte">A-</button>
-        <button class="zbtn" id="btnPlus" aria-label="Aumentar fonte">A+</button>
-      </div>
-    </section>
-
-    <section class="panel" aria-live="polite">
-      <h2>Produtos</h2>
-      <div id="produtos">Carregando…</div>
+      <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação. Para registrar só uma observação, use o botão <b>OK</b>.</div>
     </section>
 
     <section class="panel">
-      <h2>Estoque Atual</h2>
-      <div id="estoque">—</div>
+      <!-- 👇 Coloque aqui a URL do seu Web App do GAS -->
+      <iframe class="app" src="https://script.google.com/macros/s/SEU_ID_DO_WEBAPP/exec?embed=1"></iframe>
     </section>
 
-    <footer>© <b>HD TECH</b></footer>
+    <footer>Desenvolvido por <b>Alexandre Cavalcante — HDTASH —</b></footer>
   </div>
-
-  <div class="overlay" id="overlay"><div class="spinner" aria-hidden="true"></div></div>
-  <div class="toast" id="toast" role="status" aria-live="polite">Pronto!</div>
-
-<script>
-/* ==================== CONFIG ==================== */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec";
-
-/* ==================== UI BASE ==================== */
-const $ = s => document.querySelector(s);
-const elProdutos = $('#produtos');
-const elEstoque  = $('#estoque');
-const overlay    = $('#overlay');
-const toastEl    = $('#toast');
-
-let USER = ''; // sem prompt
-let _fs = Number(localStorage.getItem('eh_fs')||'100');
-document.documentElement.style.setProperty('--fs', _fs + '%');
-
-$('#btnMinus').onclick = () => setZoom(-10);
-$('#btnPlus').onclick  = () => setZoom(+10);
-function setZoom(delta){
-  _fs = Math.min(240, Math.max(70, _fs + delta));
-  document.documentElement.style.setProperty('--fs', _fs + '%');
-  localStorage.setItem('eh_fs', String(_fs));
-}
-function showOverlay(v){ overlay.style.display = v ? 'flex' : 'none'; }
-function toast(msg){ toastEl.textContent = msg||'Pronto!'; toastEl.style.display='block'; setTimeout(()=>toastEl.style.display='none',1400); }
-
-/* ==================== JSONP helper (sem CORS) ==================== */
-function jsonp(params, onDone, timeoutMs=15000){
-  const cb = 'cb_' + Math.random().toString(36).slice(2);
-  params = {...params, callback: cb};
-  const url = GAS_URL + '?' + new URLSearchParams(params).toString();
-
-  const s = document.createElement('script');
-  let done = false;
-  window[cb] = (data)=>{
-    if(done) return; done=true;
-    try{ onDone(null, data); } finally {
-      delete window[cb]; s.remove(); clearTimeout(tid);
-    }
-  };
-  s.onerror = () => {
-    if(done) return; done=true;
-    delete window[cb]; s.remove(); clearTimeout(tid);
-    onDone(new Error('Falha ao carregar'));
-  };
-  const tid = setTimeout(()=>{
-    if(done) return; done=true;
-    delete window[cb]; s.remove();
-    onDone(new Error('Tempo excedido'));
-  }, timeoutMs);
-
-  document.head.appendChild(s);
-}
-
-/* ==================== RENDER ==================== */
-function level(estoque, minimo){
-  estoque=Number(estoque||0); minimo=Number(minimo||0);
-  if(minimo>0){
-    if(estoque <= 0.25*minimo) return 'b-danger';
-    if(estoque <  minimo)      return 'b-warn';
-  }
-  return 'b-ok';
-}
-function productCard(it){
-  const opts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-  return `
-    <div class="card" id="cardL-${it.codigo}">
-      <div class="row">
-        <div>
-          <div class="name">${it.nome}</div>
-          <div class="code">Cód: ${it.codigo}</div>
-          <div class="muted">Estoque: <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
-        </div>
-        <div class="row">
-          <select class="tipo" id="tipo-${it.codigo}">
-            <option>Unidade</option><option>CX</option><option>Litro</option>
-          </select>
-          <select class="qty"  id="qty-${it.codigo}">${opts}</select>
-          <input  class="obs"  id="obs-${it.codigo}" placeholder="Obs/Justificativa">
-          <button class="btn ok"  onclick="doObs('${it.codigo}')">OK</button>
-          <button class="btn in"  onclick="doMov('ENTRADA','${it.codigo}')">Entrada</button>
-          <button class="btn out" onclick="doMov('SAÍDA','${it.codigo}')">Saída</button>
-        </div>
-      </div>
-    </div>`;
-}
-function stockCard(it){
-  return `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="name">${it.nome}</div>
-          <div class="code">Cód: ${it.codigo}</div>
-        </div>
-        <div class="badge ${level(it.estoque, it.minimo)}" id="badge-${it.codigo}">
-          Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
-        </div>
-      </div>
-    </div>`;
-}
-function render(items){
-  elProdutos.innerHTML = items.map(productCard).join('');
-  elEstoque.innerHTML  = items.map(stockCard).join('');
-}
-
-/* ==================== AÇÕES (via JSONP) ==================== */
-function doMov(tipo, codigo){
-  const qtd  = Number(document.getElementById('qty-'+codigo)?.value || 1);
-  const unit = String(document.getElementById('tipo-'+codigo)?.value || 'Unidade');
-  const obs  = String(document.getElementById('obs-'+codigo)?.value || '');
-
-  showOverlay(true);
-  jsonp({act:'mov', tipo, codigo, qtd, unidade:unit, obs, user:USER}, (err, res)=>{
-    showOverlay(false);
-    if(err || !res || res.ok===false){ alert('Erro ao movimentar'); return; }
-    const novo = res.estoque;
-    const left = document.getElementById('left-'+codigo);
-    const est  = document.getElementById('est-'+codigo);
-    const it   = window._items.find(x=>x.codigo===codigo);
-    if(it){ it.estoque = novo; const b=document.getElementById('badge-'+codigo); if(b) b.className = 'badge '+level(novo, it.minimo||0); }
-    if(left) left.textContent = novo;
-    if(est)  est.textContent  = novo;
-    toast('Pronto!');
-  });
-}
-function doObs(codigo){
-  const obs = String(document.getElementById('obs-'+codigo)?.value || '').trim();
-  if(!obs){ alert('Escreva a observação antes de tocar em OK.'); return; }
-  showOverlay(true);
-  jsonp({act:'obs', codigo, obs, user:USER}, (err, res)=>{
-    showOverlay(false);
-    if(err || !res || res.ok===false){ alert('Erro ao salvar observação'); return; }
-    document.getElementById('obs-'+codigo).value='';
-    toast('Observação salva!');
-  });
-}
-
-/* ==================== BOOT ==================== */
-function init(){
-  jsonp({act:'listar'}, (err, data)=>{
-    if(err || !Array.isArray(data)){ elProdutos.textContent = 'Erro ao carregar.'; return; }
-    window._items = data.map(x=>Object.assign({},x));
-    render(window._items);
-  }, 20000);
-}
-init();
-</script>
 </body>
 </html>
