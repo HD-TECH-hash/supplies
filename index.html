@@ -2,58 +2,218 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <meta name="theme-color" content="#6c4df5">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
   <title>📦 Estoque de Materiais Headset</title>
+
   <style>
-    :root{ --ink:#0f1431; --ink2:#636aa0; }
+    :root{
+      --fs: 100%;
+      --ink:#0f1431; --ink2:#646a8f;
+      --line:#ececff; --violet:#6a53f2; --accent:#22eacb; --pink:#ff5bb0;
+    }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;color:var(--ink);background:#fff}
+    html{font-size: var(--fs);} html,body{height:100%}
+    body{margin:0;color:var(--ink);background:#fff;
+      font:600 16px Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
 
-    /* Cabeçalho simples (mostra logo e título) */
-    header{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 12px 0}
-    .logo{width:86px;height:auto}
-    h1{margin:0;text-align:center;color:#1f39c4;font-size:clamp(1.6rem,3vw+1rem,2.4rem)}
-    .sub{color:var(--ink2);font-size:.95rem;text-align:center}
+    .wrap{max-width:1040px;margin:0 auto;padding:16px 14px}
+    header.hero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:8px 0 12px}
+    .logo{width:84px;height:auto}
+    h1{margin:0;text-align:center;font-size:clamp(1.6rem,3vw+1rem,2.4rem);color:#1f39c4}
+    .sub{color:var(--ink2);font-size:.98rem;text-align:center;max-width:820px}
 
-    /* Container full-bleed no mobile */
-    .stage{height:calc(100svh - 120px); /* espaço para o header no mobile */ }
-    @media (min-width:821px){ .stage{height:80vh;} }
+    /* ÚNICO controle de zoom do GAS */
+    .zoom{position:sticky;top:8px;display:flex;gap:10px;justify-content:flex-end;margin:8px 0 12px;z-index:5}
+    .zbtn{font-size:1.05rem;padding:.45rem .7rem;border-radius:12px;border:2px solid #6a53f2;color:#6a53f2;background:#fff;cursor:pointer}
 
-    /* IFRAME em tela cheia, sem bordas/sombras */
-    iframe.app{
-      width:100%;height:100%;
-      display:block;border:0;border-radius:0;box-shadow:none;background:transparent;
-    }
-    /* iOS: usar o espaço seguro (notch/home bar) */
-    @supports (-webkit-touch-callout: none){
-      html,body{height:-webkit-fill-available}
-      .stage{height:calc(-webkit-fill-available - 120px)}
-    }
+    .section-title{margin:18px 0 10px;font-size:1.55rem;color:#5446df;text-align:center}
+    .list{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+    .item{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+    .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+    .name{font-size:1.25rem;color:#23245a}
+    .code,.muted{font-size:.98rem;color:#6e75a3;margin-top:2px}
 
-    /* Removido A-/A+ externo para não duplicar com o do app */
-    footer{display:flex;justify-content:center;padding:8px 0 14px;color:#8b8fb8;font-size:.9rem;font-weight:600}
-    footer b{color:#0d0d44}
+    .tipo,.qty,.obs{border:1px solid #d9dbff;border-radius:12px;background:#fff;padding:.55rem .7rem;font-size:1.02rem}
+    .qty{min-width:76px}.obs{min-width:16rem;flex:1}
+    .btn{border:0;border-radius:12px;padding:.6rem .95rem;color:#fff;font-size:1.02rem;cursor:pointer}
+    .ok{background:linear-gradient(135deg,#7d89ff,#5d6bff)}
+    .in{background:linear-gradient(135deg,var(--accent),#10bba1)}
+    .out{background:linear-gradient(135deg,var(--pink),#ff2e63)}
+    .btn:active{transform:scale(.98)}
+
+    .badge{border-radius:999px;padding:.45rem .75rem;font-size:1rem;border:1px solid #d9d6ff;background:#f7f7ff;white-space:nowrap}
+    .b-ok{border-color:#24b07a}.b-warn{border-color:#f5b942}.b-danger{border-color:#ff2e63}
+
+    .overlay{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:9999}
+    .spinner{width:78px;height:78px;border-radius:999px;border:7px solid var(--accent);border-top-color:#6a53f2;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#fff;border:1px solid var(--line);padding:.7rem 1rem;border-radius:12px;display:none;z-index:10000}
+    footer{margin:22px 0 8px;text-align:center;color:#8b8fb8;font-weight:600}
+
+    /* Oculta o banner azul do GAS */
+    body>div[style*="rgb(232, 240, 254)"], body>div[style*="#e8f0fe"]{display:none!important;height:0!important;overflow:hidden!important}
+
+    /* ====== MODO EMBUTIDO (iframe) ======
+       Se o app estiver dentro de outro site (ex.: GitHub), escondemos
+       o cabeçalho e o A-/A+ do GAS para não duplicar. */
+    .is-embed header.hero,
+    .is-embed .zoom{display:none !important}
   </style>
 </head>
 <body>
-  <header>
-    <img class="logo" src="logo.png" alt="Logo Headset Brasil">
-    <h1>Estoque de Materiais Headset</h1>
-    <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação.</div>
-  </header>
+  <div class="wrap">
+    <header class="hero">
+      <img class="logo" src="https://raw.githubusercontent.com/hd-tech-hash/supplies/main/logo.png" alt="HeadSet Brasil">
+      <h1>Estoque de Materiais Headset</h1>
+      <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação. Para registrar só uma observação, use o botão <b>OK</b>.</div>
+    </header>
 
-  <div class="stage">
-    <iframe
-      class="app"
-      src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec?v=2"
-      title="Estoque Headset">
-    </iframe>
+    <!-- Controle de zoom do GAS (será oculto se estiver embutido) -->
+    <div class="zoom">
+      <button class="zbtn" onclick="ajustarFonte(-1)">A-</button>
+      <button class="zbtn" onclick="ajustarFonte(1)">A+</button>
+    </div>
+
+    <h2 class="section-title">Produtos</h2>
+    <ul id="produtos" class="list"></ul>
+
+    <h2 class="section-title">Estoque Atual</h2>
+    <ul id="estoque" class="list"></ul>
+
+    <footer>© <b>HD TECH</b></footer>
   </div>
 
-  <footer>© <b>HD TECH</b></footer>
+  <div class="overlay" id="overlay"><div class="spinner"></div></div>
+  <div class="toast" id="toast">Pronto!</div>
+
+<script>
+  /* Detecta se está dentro de iFrame (ex.: página do GitHub) */
+  (function(){
+    let embed=true;
+    try{ embed = (window.self !== window.top); }catch(_){ embed=true; }
+    if(embed) document.body.classList.add('is-embed');
+  })();
+
+  const ITEMS = <?!= ITEMS_JSON ?>;
+
+  const $ = s => document.querySelector(s);
+  const elProdutos = $('#produtos');
+  const elEstoque  = $('#estoque');
+  const overlay    = $('#overlay');
+  const toast      = $('#toast');
+
+  let USER_EMAIL = '';
+  let _fs = Number(localStorage.getItem('eh_fs')||'100');
+  document.documentElement.style.setProperty('--fs', _fs + '%');
+  function ajustarFonte(step){
+    _fs = Math.min(240, Math.max(70, _fs + step*10));
+    document.documentElement.style.setProperty('--fs', _fs + '%');
+    localStorage.setItem('eh_fs', String(_fs));
+  }
+
+  function classByLevel(estoque, minimo){
+    estoque=Number(estoque||0); minimo=Number(minimo||0);
+    if(minimo>0){
+      if(estoque <= 0.25*minimo) return 'b-danger';
+      if(estoque <  minimo)      return 'b-warn';
+    }
+    return 'b-ok';
+  }
+
+  function productRow(it){
+    const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+    return `
+      <li class="item" id="cardL-${it.codigo}">
+        <div class="row">
+          <div>
+            <div class="name">${it.nome}</div>
+            <div class="code">Cód: ${it.codigo}</div>
+            <div class="muted">Estoque: <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
+          </div>
+
+          <div class="row">
+            <select class="tipo" id="tipo-${it.codigo}">
+              <option value="Unidade">Unidade</option>
+              <option value="CX">CX</option>
+              <option value="Litro">Litro</option>
+            </select>
+            <select class="qty"  id="qty-${it.codigo}">${qtdOpts}</select>
+            <input  class="obs"  id="obs-${it.codigo}" placeholder="Obs/Justificativa"/>
+            <button class="btn ok"  onclick="clickObs('${it.codigo}')">OK</button>
+            <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
+            <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
+          </div>
+        </div>
+      </li>`;
+  }
+  function stockRow(it){
+    return `
+      <li class="item" id="card-${it.codigo}">
+        <div class="row">
+          <div>
+            <div class="name">${it.nome}</div>
+            <div class="code">Cód: ${it.codigo}</div>
+          </div>
+          <div class="badge ${classByLevel(it.estoque, it.minimo)}" id="badge-${it.codigo}">
+            Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
+          </div>
+        </div>
+      </li>`;
+  }
+  function render(items){
+    elProdutos.innerHTML = items.map(productRow).join('');
+    elEstoque.innerHTML  = items.map(stockRow).join('');
+  }
+  function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
+
+  function showOverlay(v){ overlay.style.display = v ? 'flex' : 'none'; }
+  function showToast(msg){ toast.textContent = msg||'Pronto!'; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1400); }
+
+  function clickMov(tipo, codigo){
+    const qtdSel  = document.getElementById('qty-'+codigo);
+    const tipoSel = document.getElementById('tipo-'+codigo);
+    const obsInp  = document.getElementById('obs-'+codigo);
+    const qtd     = Number(qtdSel?.value || 1);
+    const unidade = String(tipoSel?.value || 'Unidade');
+    const obs     = String(obsInp?.value || '');
+
+    showOverlay(true);
+    google.script.run
+      .withSuccessHandler(res=>{
+        const it = findItem(codigo);
+        if (it){ it.estoque = res.estoque; }
+        const l = document.getElementById('left-'+codigo);
+        const e = document.getElementById('est-'+codigo);
+        const b = document.getElementById('badge-'+codigo);
+        if (l) l.textContent = res.estoque;
+        if (e) e.textContent = res.estoque;
+        if (b && it) b.className = 'badge ' + classByLevel(res.estoque, it.minimo||0);
+        showOverlay(false); showToast('Pronto!');
+      })
+      .withFailureHandler(err=>{
+        showOverlay(false);
+        alert('Erro: '+ (err?.message || err));
+      })
+      .apiMovimentar(tipo, codigo, qtd, unidade, obs, USER_EMAIL);
+  }
+
+  function clickObs(codigo){
+    const obsInp  = document.getElementById('obs-'+codigo);
+    const obs     = String(obsInp?.value || '').trim();
+    if (!obs){ alert('Escreva a observação antes de tocar em OK.'); return; }
+    showOverlay(true);
+    google.script.run
+      .withSuccessHandler(()=>{ showOverlay(false); showToast('Observação salva!'); obsInp.value=''; })
+      .withFailureHandler(err=>{ showOverlay(false); alert('Erro: '+(err?.message || err)); })
+      .apiObservacao(codigo, obs, USER_EMAIL);
+  }
+
+  (function init(){
+    window._items = (ITEMS||[]).map(x=>Object.assign({},x));
+    render(window._items);
+  })();
+</script>
 </body>
 </html>
