@@ -1,50 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
-  <meta name="theme-color" content="#6c4dfb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#6c4df5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>📦 Estoque de Materiais Headset</title>
+
+  <!-- (opcional) manifest, se já existir no seu repo -->
   <link rel="manifest" href="manifest.json">
+
   <style>
     :root{
-      --ink:#0f1431; --muted:#6b72a8;
-      --violet:#6C4DFB; --violet-100:#f4f2ff;
-      --shadow: 0 26px 72px rgba(108,77,251,.18), 0 10px 24px rgba(108,77,251,.12), 0 2px 4px rgba(0,0,0,.06);
+      --ink:#0f1431;
+      --muted:#7077a3;
+      --violet:#6c4df5;
+      --violet-100:#f2efff;
+      --line:#ecebff;
+      --shadow:
+        0 32px 60px rgba(108, 77, 245, .18),
+        0 12px 28px rgba(17, 24, 39, .10),
+        0 2px 6px rgba(17, 24, 39, .08);
     }
-    *{box-sizing:border-box} html,body{height:100%}
-    body{margin:0;background:#fff;color:var(--ink);font:600 16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
-    .wrap{max-width:980px;margin:0 auto;padding:16px}
-    header{display:flex;flex-direction:column;align-items:center;gap:12px;margin:10px 0 16px}
-    .logo{width:110px;height:auto;display:block}
-    h1{margin:0;font-weight:900;text-align:center;letter-spacing:.2px;
-       color:#2740ff;font-size:clamp(22px,4.2vw,44px);
-       text-shadow:0 14px 28px rgba(108,77,251,.35)}
-    .panel{background:#fff;border:1px solid #efeffa;border-radius:20px;padding:14px;margin:14px 0;
-           box-shadow:var(--shadow)}
-    .title{margin:0 0 8px;text-align:center;color:#5a41f5;font-size:clamp(18px,3.6vw,30px)}
-    .card{background:#fff;border:1px solid #ececff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .name{font-size:clamp(18px,3.8vw,26px);color:#222a66}
-    .code{font-size:clamp(13px,2.6vw,16px);color:#6b72a8}
-    .badge{border-radius:999px;padding:.55rem .9rem;font-size:clamp(13px,2.6vw,16px);
-           background:var(--violet-100);border:2px solid #dedbff}
-    .b-ok{border-color:#24b07a} .b-warn{border-color:#f5b942} .b-danger{border-color:#ff3b6e}
-    select,input,button{font:600 16px/1.3 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
-    .tipo,.qty,.obs{border:1px solid #dcdcf7;border-radius:12px;background:#fff;
-                    padding:.55rem .75rem; box-shadow:0 6px 14px rgba(108,77,251,.10)}
-    .qty{min-width:76px} .obs{min-width:15rem;flex:1}
-    .btn{border:0;border-radius:12px;padding:.62rem .9rem;color:#fff;cursor:pointer}
-    .ok{background:linear-gradient(135deg,#7683ff,#5666ff)}
-    .in{background:linear-gradient(135deg,#1bdcbf,#10bba1)}
-    .out{background:linear-gradient(135deg,#ff5bb0,#ff2e63)}
-    .btn:active{transform:scale(.98)}
-    .muted{color:var(--muted)}
-    footer{text-align:center;margin:26px 0;color:#8b8fb8;font-size:.95rem}
-    footer b{color:#0d0d44}
-    .loading{opacity:.55;pointer-events:none}
-    .center{display:flex;align-items:center;justify-content:center}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:#fff; color:var(--ink);
+      font: 600 16px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+    }
+
+    /* HEADER super clean */
+    header{
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      padding:12px 0 8px;
+    }
+    .logo{
+      width:108px; height:auto; display:block;
+      filter: drop-shadow(0 14px 24px rgba(108,77,245,.26));
+    }
+    h1{
+      margin:0;
+      font-size: clamp(1.8rem, 2.6rem, 6vw);
+      text-align:center;
+      color:#2a38d9;
+      text-shadow: 0 14px 26px rgba(108,77,245,.28);
+      letter-spacing:.2px;
+    }
+
+    /* CARDS */
+    .section{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      margin:16px 0;
+      box-shadow: var(--shadow);
+    }
+    .title{
+      margin:2px 0 14px; text-align:center;
+      font-weight:900; font-size:1.6rem; color:#5b47ee;
+      letter-spacing:.3px;
+    }
+    .card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      margin:12px 0;
+      box-shadow: var(--shadow);
+    }
+    .row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .name{font-size:1.35rem}
+    .code{color:var(--muted)}
+
+    /* inputs/botoes */
+    select,input{font:600 15px/1.2 inherit}
+    .tipo,.qty,.obs{
+      background:#fff; border:1px solid #dcdafc; border-radius:12px;
+      box-shadow: 0 10px 18px rgba(108,77,245,.10);
+      padding:.6rem .75rem;
+    }
+    .qty{min-width:74px}
+    .obs{min-width:16rem; flex:1}
+    .btn{
+      appearance:none; border:0; border-radius:12px;
+      padding:.65rem .95rem; color:#fff; cursor:pointer;
+      font-weight:800; letter-spacing:.2px;
+      transition:transform .06s ease;
+    }
+    .btn:active{transform:scale(.985)}
+    .ok{background:linear-gradient(135deg,#7e8dff,#5765ff)}
+    .in{background:linear-gradient(135deg,#15d6be,#12b39a)}
+    .out{background:linear-gradient(135deg,#ff669d,#ff2d62)}
+
+    .badge{
+      border-radius:999px; padding:.55rem .9rem; font-weight:900;
+      border:2px solid var(--line); background:#fafaff;
+    }
+    .b-ok{border-color:#20b27a}
+    .b-warn{border-color:#f2b148}
+    .b-danger{border-color:#ff2d62}
+
+    footer{
+      text-align:center; margin:22px 0 6px; color:#7b80aa; font-weight:700
+    }
+    footer b{color:#0f1431}
+
+    /* iOS “Docs blue bar” ou banners indesejados (só pra garantir) */
+    body > div[style*="#e8f0fe"], body > div[style*="rgb(232, 240, 254)"] {
+      display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;
+    }
   </style>
 </head>
 <body>
@@ -54,150 +124,160 @@
       <h1>Estoque de Materiais Headset</h1>
     </header>
 
-    <section class="panel">
-      <h2 class="title">Produtos</h2>
+    <section class="section">
+      <div class="title">Produtos</div>
       <div id="produtos">—</div>
     </section>
 
-    <section class="panel">
-      <h2 class="title">Estoque Atual</h2>
+    <section class="section">
+      <div class="title">Estoque Atual</div>
       <div id="estoque">—</div>
     </section>
 
     <footer>Desenvolvido por <b>Alexandre Cavalcante — HD TECH —</b></footer>
   </div>
 
-<script>
-/* ========= CONFIG ========= */
-// 🔗 Troque pela URL do seu Web App (termina com /exec)
-const API_BASE = 'https://script.google.com/macros/s/REPLACE_WITH_YOUR_EXEC_URL/exec';
+  <script>
+    // ====== CONFIG ======
+    const API_BASE = "https://script.google.com/macros/s/AKfycbxdBLafYKDOGL3VURl2pRNxpUlunfz4Y4eBkK-WRovXtsvUA4id3jF4gy-eh-Oo7ut43A/exec";
 
-/* ========= HELPERS ========= */
-const $ = s => document.querySelector(s);
-const elProdutos = $('#produtos');
-const elEstoque  = $('#estoque');
+    // ====== HELPERS ======
+    const $ = s => document.querySelector(s);
+    const elProdutos = $('#produtos');
+    const elEstoque  = $('#estoque');
 
-function classByLevel(estoque, minimo){
-  estoque=Number(estoque||0); minimo=Number(minimo||0);
-  if(minimo>0){
-    if(estoque <= 0.25*minimo) return 'b-danger';
-    if(estoque <  minimo)      return 'b-warn';
-  }
-  return 'b-ok';
-}
+    function classByLevel(estoque, minimo){
+      estoque=Number(estoque||0); minimo=Number(minimo||0);
+      if(minimo>0){
+        if(estoque <= 0.25*minimo) return 'b-danger';
+        if(estoque <  minimo)      return 'b-warn';
+      }
+      return 'b-ok';
+    }
 
-function productRow(it){
-  const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-  return `
-    <div class="card" id="cardL-${it.codigo}">
-      <div class="row">
-        <div>
-          <div class="name">${it.nome}</div>
-          <div class="code">Cód: ${it.codigo} &nbsp; <span class="muted">Estoque:</span> <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
-        </div>
-        <div class="row">
-          <select class="tipo" id="tipo-${it.codigo}">
-            <option value="Unidade">Unidade</option>
-            <option value="CX">CX</option>
-            <option value="Litro">Litro</option>
-          </select>
-          <select class="qty" id="qty-${it.codigo}">${qtdOpts}</select>
-          <input class="obs" id="obs-${it.codigo}" placeholder="Obs/Justificativa"/>
-          <button class="btn ok"  onclick="clickObs('${it.codigo}')">OK</button>
-          <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
-          <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
-        </div>
-      </div>
-    </div>`;
-}
-function stockRow(it){
-  return `
-    <div class="card" id="card-${it.codigo}">
-      <div class="row">
-        <div>
-          <div class="name">${it.nome}</div>
-          <div class="code">Cód: ${it.codigo}</div>
-        </div>
-        <div class="badge ${classByLevel(it.estoque, it.minimo)}" id="badge-${it.codigo}">
-          Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
-        </div>
-      </div>
-    </div>`;
-}
-function render(items){
-  elProdutos.innerHTML = items.map(productRow).join('');
-  elEstoque.innerHTML  = items.map(stockRow).join('');
-}
+    function productCard(it){
+      const qtdOpts = Array.from({length:50}, (_ ,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+      return `
+        <div class="card" id="c-${it.codigo}">
+          <div class="row" style="width:100%">
+            <div>
+              <div class="name">${it.nome}</div>
+              <div class="code">Cód: ${it.codigo} • Estoque: <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
+            </div>
+            <div class="row" style="flex:1; min-width:260px">
+              <select class="tipo" id="tipo-${it.codigo}">
+                <option value="Unidade">Unidade</option>
+                <option value="CX">CX</option>
+                <option value="Litro">Litro</option>
+              </select>
+              <select class="qty" id="qty-${it.codigo}">${qtdOpts}</select>
+              <input class="obs" id="obs-${it.codigo}" placeholder="Obs/Justificativa" />
+              <button class="btn ok"  onclick="clickObs('${it.codigo}')">OK</button>
+              <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
+              <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
+            </div>
+          </div>
+        </div>`;
+    }
 
-/* ========= API ========= */
-async function apiList(){
-  const url = API_BASE + '?act=list&ts=' + Date.now();
-  const r = await fetch(url, { method:'GET' });
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const j = await r.json();
-  if(!j.ok) throw new Error(j.error||'Falha ao listar');
-  return j.items||[];
-}
-async function apiPost(act, data){
-  const body = new URLSearchParams({ act, ...data }).toString();
-  const r = await fetch(API_BASE, {
-    method:'POST',
-    headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8' },
-    body
-  });
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const j = await r.json();
-  if(!j.ok) throw new Error(j.error||'Falha');
-  return j;
-}
+    function stockCard(it){
+      return `
+        <div class="card">
+          <div class="row" style="width:100%">
+            <div>
+              <div class="name">${it.nome}</div>
+              <div class="code">Cód: ${it.codigo}</div>
+            </div>
+            <div class="badge ${classByLevel(it.estoque, it.minimo)}" id="b-${it.codigo}">
+              Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
+            </div>
+          </div>
+        </div>`;
+    }
 
-/* ========= UI actions ========= */
-function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
+    function render(items){
+      elProdutos.innerHTML = items.map(productCard).join('');
+      elEstoque.innerHTML  = items.map(stockCard).join('');
+    }
 
-async function clickMov(tipo, codigo){
-  try{
-    document.body.classList.add('loading');
-    const qtd  = Number(document.getElementById('qty-'+codigo)?.value || 1);
-    const und  = String(document.getElementById('tipo-'+codigo)?.value || 'Unidade');
-    const obs  = String(document.getElementById('obs-'+codigo)?.value || '');
-    const res  = await apiPost('move', { tipo, codigo, qtd, unidade:und, obs });
-    const it   = findItem(codigo); if(it){ it.estoque = res.estoque; }
-    document.getElementById('left-'+codigo).textContent = res.estoque;
-    document.getElementById('est-'+codigo).textContent  = res.estoque;
-    const b = document.getElementById('badge-'+codigo); if(b && it) b.className = 'badge '+classByLevel(res.estoque, it.minimo||0);
-  }catch(e){
-    alert('Erro: '+e.message);
-  }finally{
-    document.body.classList.remove('loading');
-  }
-}
-async function clickObs(codigo){
-  const obsInp = document.getElementById('obs-'+codigo);
-  const obs    = String(obsInp?.value || '').trim();
-  if(!obs){ alert('Escreva a observação.'); return; }
-  try{
-    document.body.classList.add('loading');
-    await apiPost('obs', { codigo, obs });
-    obsInp.value = '';
-  }catch(e){
-    alert('Erro: '+e.message);
-  }finally{
-    document.body.classList.remove('loading');
-  }
-}
+    // ====== API ======
+    async function apiList(){
+      const url = API_BASE + "?act=list&ts=" + Date.now();
+      const r = await fetch(url, { method:"GET", credentials:"omit" });
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }
+    async function apiMov(params){
+      const r = await fetch(API_BASE + "?act=mov", {
+        method: "POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+        body: new URLSearchParams(params)
+      });
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }
+    async function apiObs(params){
+      const r = await fetch(API_BASE + "?act=obs", {
+        method: "POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+        body: new URLSearchParams(params)
+      });
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.json();
+    }
 
-/* ========= bootstrap ========= */
-(async function init(){
-  try{
-    elProdutos.textContent = 'Carregando…';
-    elEstoque.textContent  = 'Carregando…';
-    window._items = await apiList();
-    render(window._items);
-  }catch(e){
-    elProdutos.textContent = 'Erro ao carregar.';
-    elEstoque.textContent  = '—';
-  }
-})();
-</script>
+    // ====== Actions ======
+    function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
+
+    async function clickMov(tipo, codigo){
+      try{
+        const qtd  = Number(document.getElementById('qty-'+codigo)?.value || 1);
+        const unid = String(document.getElementById('tipo-'+codigo)?.value || 'Unidade');
+        const obs  = String(document.getElementById('obs-'+codigo)?.value || '');
+        const res  = await apiMov({ tipo, codigo, qtd, unid, obs });
+        if(res && res.ok){
+          const it = findItem(codigo); if(it) it.estoque = res.estoque;
+          const l = document.getElementById('left-'+codigo);
+          const e = document.getElementById('est-'+codigo);
+          const b = document.getElementById('b-'+codigo);
+          if(l) l.textContent = res.estoque;
+          if(e) e.textContent = res.estoque;
+          if(b && it) b.className = 'badge ' + classByLevel(res.estoque, it.minimo||0);
+        }else{
+          alert('Falha ao movimentar.');
+        }
+      }catch(err){
+        alert('Erro: '+(err?.message||err));
+      }
+    }
+
+    async function clickObs(codigo){
+      try{
+        const obs = String(document.getElementById('obs-'+codigo)?.value || '').trim();
+        if(!obs){ alert('Escreva a observação.'); return; }
+        const res = await apiObs({ codigo, obs });
+        if(res && res.ok){
+          document.getElementById('obs-'+codigo).value = '';
+        }else{
+          alert('Falha ao salvar observação.');
+        }
+      }catch(err){
+        alert('Erro: '+(err?.message||err));
+      }
+    }
+
+    // ====== Boot ======
+    (async function init(){
+      try{
+        const data = await apiList();
+        if(!data || !data.ok){ throw new Error('Resposta inválida'); }
+        window._items = (data.items||[]).map(x=>Object.assign({},x));
+        render(window._items);
+      }catch(e){
+        elProdutos.textContent = 'Erro ao carregar.';
+        elEstoque.textContent  = '—';
+      }
+    })();
+  </script>
 </body>
 </html>
