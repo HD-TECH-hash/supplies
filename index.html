@@ -25,9 +25,9 @@
       font-weight:700;
     }
     .wrap{max-width:1100px;margin:0 auto}
-    @media (max-width: 820px){ .wrap{max-width:none} }
+    @media (max-width:820px){ .wrap{max-width:none} }
 
-    /* Cabeçalho ÚNICO */
+    /* Cabeçalho único */
     .hero{
       background:#6a53f2;color:#fff;border-radius:22px;
       padding:28px 14px 22px;margin:8px 0 12px;text-align:center;box-shadow:var(--shadow)
@@ -48,10 +48,11 @@
     .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow)}
     .panel h2{margin:0 0 12px;text-align:center;color:#6a53f2;font-size:1.8rem}
 
-    iframe.app{width:100%;height:78vh;border:0;border-radius:16px;box-shadow:var(--shadow)}
-    .fallback{
-      margin:16px auto 6px;text-align:center
+    iframe.app{
+      width:100%;height:78vh;border:0;border-radius:16px;box-shadow:var(--shadow);
+      background:#f7f7ff; /* reduz “tela branca” */
     }
+    .fallback{margin:16px auto 6px;text-align:center;display:none}
     .btn-open{
       appearance:none;border:0;border-radius:12px;padding:.8rem 1.1rem;font-weight:800;cursor:pointer;
       color:#fff;background:linear-gradient(135deg,var(--violet),#8d76ff);box-shadow:0 10px 22px rgba(106,83,242,.32)
@@ -78,8 +79,8 @@
 
     <section class="panel">
       <h2>Produtos & Estoque</h2>
-      <iframe id="appFrame" class="app" title="Estoque Headset"></iframe>
-      <div class="fallback" id="fallback" style="display:none">
+      <iframe id="appFrame" class="app" title="Estoque Headset" loading="eager" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="fallback" id="fallback">
         <p>Não foi possível carregar o app embutido.</p>
         <button class="btn-open" id="openBtn">Abrir em nova aba</button>
       </div>
@@ -89,11 +90,10 @@
   </div>
 
 <script>
-  // >>>>>>>>>>>> CONFIGURE AQUI <<<<<<<<<<<<
+  // URL do seu WebApp (EXEC)
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec';
-  // ^^^^^ substitua pela sua URL /exec do Apps Script
 
-  // Zoom (único)
+  // Zoom único
   let _fs = Number(localStorage.getItem('eh_fs')||'100');
   document.documentElement.style.setProperty('--fs', _fs + '%');
   function ajustarFonte(step){
@@ -102,37 +102,21 @@
     localStorage.setItem('eh_fs', String(_fs));
   }
 
-  // Detecta modo standalone (Atalho/A2HS)
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-  // iPhone/iPad?
-  const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  // Estratégia:
-  // - Se for iOS em standalone: abre DIRETO a URL do GAS (sem iframe) -> elimina tela branca
-  // - Caso contrário: carrega no iframe e oferece fallback
   const frame = document.getElementById('appFrame');
   const fallback = document.getElementById('fallback');
   const openBtn = document.getElementById('openBtn');
 
-  if (isiOS && isStandalone) {
-    // abrir direto (sem redirecionar de volta)
-    window.location.replace(GAS_URL);
-  } else {
-    // carregar no iframe
-    frame.src = GAS_URL;
+  // Sempre tenta no iframe (sem redirecionar)
+  frame.src = GAS_URL;
 
-    // fallback se não renderizar em 5s
-    let loaded = false;
-    frame.addEventListener('load', ()=>{ loaded = true; });
-    setTimeout(()=>{
-      if(!loaded){
-        fallback.style.display = 'block';
-      }
-    }, 5000);
+  // Se o iframe não disparar "load" em X segundos, mostra fallback
+  let loaded = false;
+  frame.addEventListener('load', ()=>{ loaded = true; });
+  setTimeout(()=>{ if(!loaded) fallback.style.display = 'block'; }, 6000);
 
-    openBtn.addEventListener('click', ()=>{ window.open(GAS_URL, '_blank', 'noopener'); });
-  }
+  openBtn.addEventListener('click', ()=>{ window.open(GAS_URL, '_blank', 'noopener'); });
+
+  // Dica: em iPhone, apague o atalho antigo e crie outro para usar este HTML novo.
 </script>
 </body>
 </html>
