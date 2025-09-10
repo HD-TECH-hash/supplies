@@ -5,104 +5,55 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
   <meta name="theme-color" content="#6c4df5">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="manifest.json">
   <title>📦 Estoque de Materiais Headset</title>
-
   <style>
-    :root{
-      --ink:#0f1431; --ink2:#636aa0;
-      --panel:#ffffff; --stroke:#efe9ff;
-      --violet:#6a53f2;
-      --shadow: 0 18px 48px rgba(106,83,242,.18), 0 6px 18px rgba(106,83,242,.12);
-    }
+    :root{ --ink:#0f1431; --ink2:#636aa0; }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; padding:0; background:#fff; color:var(--ink);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
-      font-weight:700;
-    }
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial;color:var(--ink);background:#fff}
 
-    /* Layout base (desktop/tablet) */
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    header{display:flex;align-items:center;flex-direction:column;gap:10px;margin:10px 0 18px}
-    .logo{width:90px;height:auto}
-    h1{
-      margin:0; line-height:1.05; text-align:center;
-      font-size: clamp(1.6rem, 3vw + 1rem, 2.6rem);
-      color:#1f39c4; text-shadow: 0 6px 18px rgba(106,83,242,.35);
-    }
-    .sub{color:var(--ink2); font-size:.95rem; text-align:center; margin-top:4px}
+    /* Cabeçalho simples (mostra logo e título) */
+    header{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 12px 0}
+    .logo{width:86px;height:auto}
+    h1{margin:0;text-align:center;color:#1f39c4;font-size:clamp(1.6rem,3vw+1rem,2.4rem)}
+    .sub{color:var(--ink2);font-size:.95rem;text-align:center}
 
-    .panel{background:var(--panel);border:1px solid var(--stroke);border-radius:18px;padding:16px;margin:14px 0;box-shadow:var(--shadow)}
-    .panel h2{margin:0 0 10px;text-align:center;color:#6a53f2;font-size:1.6rem}
+    /* Container full-bleed no mobile */
+    .stage{height:calc(100svh - 120px); /* espaço para o header no mobile */ }
+    @media (min-width:821px){ .stage{height:80vh;} }
 
-    /* Iframe “app” */
+    /* IFRAME em tela cheia, sem bordas/sombras */
     iframe.app{
-      display:block; width:100%;
-      height: 80vh;                /* desktop */
-      border:0; border-radius:16px; box-shadow:var(--shadow);
-      background:transparent;
+      width:100%;height:100%;
+      display:block;border:0;border-radius:0;box-shadow:none;background:transparent;
+    }
+    /* iOS: usar o espaço seguro (notch/home bar) */
+    @supports (-webkit-touch-callout: none){
+      html,body{height:-webkit-fill-available}
+      .stage{height:calc(-webkit-fill-available - 120px)}
     }
 
-    footer{text-align:center;margin:20px 0;color:#8b8fb8;font-size:.9rem;font-weight:600}
+    /* Removido A-/A+ externo para não duplicar com o do app */
+    footer{display:flex;justify-content:center;padding:8px 0 14px;color:#8b8fb8;font-size:.9rem;font-weight:600}
     footer b{color:#0d0d44}
-
-    /* ===== Mobile: fullscreen e sem “camadas” extras ===== */
-    @media (max-width: 820px){
-      .wrap{
-        max-width:none;
-        padding-left: max(12px, env(safe-area-inset-left));
-        padding-right: max(12px, env(safe-area-inset-right));
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
-      }
-      /* tira o visual de cartão em volta do app para não duplicar sombras/bordas */
-      .panel{
-        background: transparent;
-        border: 0;
-        box-shadow: none;
-        padding: 0;
-        margin: 10px 0;
-      }
-      /* iframe “tela cheia” no iOS/Android */
-      iframe.app{
-        border-radius: 0;
-        box-shadow: none;
-        height: 100svh;                   /* iOS 16+/Android modernos */
-        height: 100vh;                    /* fallback */
-      }
-      /* melhor preenchimento real no Safari iOS */
-      @supports (-webkit-touch-callout: none) {
-        html, body { height: -webkit-fill-available; }
-        iframe.app { height: -webkit-fill-available; }
-      }
-      /* cabeçalho mais compacto no mobile */
-      header{ gap:8px; margin:8px 0 8px }
-      .logo{ width:78px }
-      .sub{ font-size:.9rem }
-    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <img class="logo" src="logo.png" alt="Logo Headset Brasil">
-      <h1>Estoque de Materiais Headset</h1>
-      <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação.</div>
-    </header>
+  <header>
+    <img class="logo" src="logo.png" alt="Logo Headset Brasil">
+    <h1>Estoque de Materiais Headset</h1>
+    <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação.</div>
+  </header>
 
-    <!-- Removi o A-/A+ externo para não duplicar (fica só o do app). -->
-    <section class="panel">
-      <h2>Produtos & Estoque</h2>
-      <iframe
-        class="app"
-        src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec"
-        title="Estoque Headset">
-      </iframe>
-    </section>
-
-    <footer>© <b>HD TECH</b></footer>
+  <div class="stage">
+    <iframe
+      class="app"
+      src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec?v=2"
+      title="Estoque Headset">
+    </iframe>
   </div>
+
+  <footer>© <b>HD TECH</b></footer>
 </body>
 </html>
