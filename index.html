@@ -2,72 +2,77 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
   <meta name="theme-color" content="#6c4df5">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>📦 Estoque de Materiais Headset</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    /* Reset mínimo + fullscreen real no mobile */
-    html, body { height: 100%; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #ffffff;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial, sans-serif;
+    :root{
+      --fs: 100%;
+      --ink:#0f1431; --ink2:#636aa0;
+      --violet:#6a53f2;
+      --shadow: 0 18px 48px rgba(106,83,242,.18), 0 6px 18px rgba(106,83,242,.12);
+    }
+    *{box-sizing:border-box}
+    html{font-size: var(--fs);}
+    body{
+      margin:0; padding:0; background:#fff; color:var(--ink);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;
+      font-weight:700;
+    }
+    header{
+      display:flex; flex-direction:column; align-items:center;
+      background:#6c4df5; color:#fff; padding:20px 12px 28px;
+      text-align:center; border-bottom-left-radius:20px; border-bottom-right-radius:20px;
+    }
+    .logo{width:90px;height:auto;margin-bottom:10px}
+    h1{
+      margin:0; font-size: clamp(1.6rem, 3vw + 1rem, 2.4rem);
+      text-shadow: 0 4px 12px rgba(0,0,0,.25);
+    }
+    .sub{color:#e5e5ff; font-size:.95rem; margin-top:6px}
+
+    .zoom{margin-top:12px; display:flex; gap:10px; justify-content:center}
+    .zbtn{
+      font-size: 1rem; padding:.35rem .8rem; border-radius:12px;
+      border:2px solid #fff; color:#6c4df5; background:#fff;
+      cursor:pointer; box-shadow:var(--shadow);
     }
 
-    /* O app do GAS ocupa TODA a tela */
-    iframe#app {
-      position: fixed;
-      inset: 0;            /* top:0; right:0; bottom:0; left:0 */
-      width: 100%;
-      height: 100dvh;      /* viewport dinâmico — melhor no iOS/Android */
-      border: 0;
-      display: block;
-      background: #fff;
+    iframe.app{
+      width:100%; height:calc(100vh - 260px); border:0;
+      display:block; margin:0 auto; padding:0;
     }
 
-    /* Fallback discreto caso o iframe não carregue */
-    .fallback {
-      position: fixed; inset: 0;
-      display: grid; place-items: center;
-      font-weight: 700; color: #4b4f6a;
-      padding: 16px; text-align: center;
-    }
-    .fallback a {
-      display: inline-block; margin-top: 10px;
-      padding: 10px 14px; border-radius: 12px;
-      background: #6c4df5; color: #fff; text-decoration: none;
-      box-shadow: 0 12px 28px rgba(108,77,245,.28);
-    }
+    footer{text-align:center;margin:18px 0;color:#8b8fb8;font-size:.9rem;font-weight:600}
+    footer b{color:#0d0d44}
   </style>
 </head>
 <body>
-
-  <!-- Apenas o app do Google (com o seu cabeçalho interno) -->
-  <iframe
-    id="app"
-    src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec"
-    allow="fullscreen"
-    referrerpolicy="no-referrer"
-  ></iframe>
-
-  <!-- Fallback: se algo bloquear o iframe, o usuário abre em nova aba -->
-  <div class="fallback" id="fallback" hidden>
-    <div>
-      <div>Não foi possível embutir o aplicativo.</div>
-      <a href="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec" target="_blank" rel="noopener">Abrir em nova aba</a>
+  <header>
+    <img class="logo" src="logo.png" alt="Logo Headset Brasil">
+    <h1>Estoque de Materiais Headset</h1>
+    <div class="sub">Toque no produto, escolha <b>Tipo</b>, a quantidade e registre a movimentação.<br>Para registrar só uma observação, use o botão <b>OK</b>.</div>
+    <div class="zoom">
+      <button class="zbtn" onclick="ajustarFonte(-1)">A-</button>
+      <button class="zbtn" onclick="ajustarFonte(1)">A+</button>
     </div>
-  </div>
+  </header>
 
-  <script>
-    // Se o iframe não sinalizar carregamento em alguns segundos, mostra o fallback
-    const fb = document.getElementById('fallback');
-    const app = document.getElementById('app');
-    let fallbackTimer = setTimeout(()=>{ fb.hidden = false; }, 6000);
-    app.addEventListener('load', ()=>{ clearTimeout(fallbackTimer); fb.hidden = true; });
-  </script>
+  <!-- Aqui só entra o app (sem duplicação de cabeçalho) -->
+  <iframe class="app" src="https://script.google.com/macros/s/AKfycbxMtY3P5egk0xHFVEV5CyzxkbtLtfHF4pVdd7yTLGsCQbOlnS5B6XNHJbcmjaJ7Lsff0A/exec?noheader=1"></iframe>
 
+  <footer>© <b>HD TECH</b></footer>
+
+<script>
+  let _fs = Number(localStorage.getItem('eh_fs')||'100');
+  document.documentElement.style.setProperty('--fs', _fs + '%');
+  function ajustarFonte(step){
+    _fs = Math.min(240, Math.max(70, _fs + step*10));
+    document.documentElement.style.setProperty('--fs', _fs + '%');
+    localStorage.setItem('eh_fs', String(_fs));
+  }
+</script>
 </body>
 </html>
