@@ -7,114 +7,43 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>📦 Estoque de Materiais Headset</title>
 
-  <!-- (opcional) manifest, se já existir no seu repo -->
   <link rel="manifest" href="manifest.json">
 
   <style>
     :root{
-      --ink:#0f1431;
-      --muted:#7077a3;
-      --violet:#6c4df5;
-      --violet-100:#f2efff;
-      --line:#ecebff;
-      --shadow:
-        0 32px 60px rgba(108, 77, 245, .18),
-        0 12px 28px rgba(17, 24, 39, .10),
-        0 2px 6px rgba(17, 24, 39, .08);
+      --ink:#0f1431; --muted:#7077a3; --violet:#6c4df5; --line:#ecebff;
+      --shadow: 0 32px 60px rgba(108,77,245,.18), 0 12px 28px rgba(17,24,39,.10), 0 2px 6px rgba(17,24,39,.08);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; background:#fff; color:var(--ink);
-      font: 600 16px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;
-    }
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
-    }
-
-    /* HEADER super clean */
-    header{
-      display:flex; flex-direction:column; align-items:center; gap:16px;
-      padding:12px 0 8px;
-    }
-    .logo{
-      width:108px; height:auto; display:block;
-      filter: drop-shadow(0 14px 24px rgba(108,77,245,.26));
-    }
-    h1{
-      margin:0;
-      font-size: clamp(1.8rem, 2.6rem, 6vw);
-      text-align:center;
-      color:#2a38d9;
-      text-shadow: 0 14px 26px rgba(108,77,245,.28);
-      letter-spacing:.2px;
-    }
-
-    /* CARDS */
-    .section{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:18px;
-      margin:16px 0;
-      box-shadow: var(--shadow);
-    }
-    .title{
-      margin:2px 0 14px; text-align:center;
-      font-weight:900; font-size:1.6rem; color:#5b47ee;
-      letter-spacing:.3px;
-    }
-    .card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:14px;
-      margin:12px 0;
-      box-shadow: var(--shadow);
-    }
-    .row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    body{margin:0;background:#fff;color:var(--ink);font:600 16px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(26px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+    header{display:flex;flex-direction:column;align-items:center;gap:16px;padding:12px 0 8px}
+    .logo{width:108px;height:auto;filter:drop-shadow(0 14px 24px rgba(108,77,245,.26))}
+    h1{margin:0;font-size:clamp(1.8rem,2.6rem,6vw);text-align:center;color:#2a38d9;text-shadow:0 14px 26px rgba(108,77,245,.28);letter-spacing:.2px}
+    .section{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
+    .title{margin:2px 0 14px;text-align:center;font-weight:900;font-size:1.6rem;color:#5b47ee;letter-spacing:.3px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
     .name{font-size:1.35rem}
     .code{color:var(--muted)}
-
-    /* inputs/botoes */
     select,input{font:600 15px/1.2 inherit}
-    .tipo,.qty,.obs{
-      background:#fff; border:1px solid #dcdafc; border-radius:12px;
-      box-shadow: 0 10px 18px rgba(108,77,245,.10);
-      padding:.6rem .75rem;
-    }
+    .tipo,.qty,.obs{background:#fff;border:1px solid #dcdafc;border-radius:12px;box-shadow:0 10px 18px rgba(108,77,245,.10);padding:.6rem .75rem}
     .qty{min-width:74px}
-    .obs{min-width:16rem; flex:1}
-    .btn{
-      appearance:none; border:0; border-radius:12px;
-      padding:.65rem .95rem; color:#fff; cursor:pointer;
-      font-weight:800; letter-spacing:.2px;
-      transition:transform .06s ease;
-    }
+    .obs{min-width:16rem;flex:1}
+    .btn{appearance:none;border:0;border-radius:12px;padding:.65rem .95rem;color:#fff;cursor:pointer;font-weight:800;letter-spacing:.2px;transition:transform .06s ease}
     .btn:active{transform:scale(.985)}
     .ok{background:linear-gradient(135deg,#7e8dff,#5765ff)}
     .in{background:linear-gradient(135deg,#15d6be,#12b39a)}
     .out{background:linear-gradient(135deg,#ff669d,#ff2d62)}
-
-    .badge{
-      border-radius:999px; padding:.55rem .9rem; font-weight:900;
-      border:2px solid var(--line); background:#fafaff;
-    }
-    .b-ok{border-color:#20b27a}
-    .b-warn{border-color:#f2b148}
-    .b-danger{border-color:#ff2d62}
-
-    footer{
-      text-align:center; margin:22px 0 6px; color:#7b80aa; font-weight:700
-    }
+    .badge{border-radius:999px;padding:.55rem .9rem;font-weight:900;border:2px solid var(--line);background:#fafaff}
+    .b-ok{border-color:#20b27a}.b-warn{border-color:#f2b148}.b-danger{border-color:#ff2d62}
+    footer{text-align:center;margin:22px 0 6px;color:#7b80aa;font-weight:700}
     footer b{color:#0f1431}
-
-    /* iOS “Docs blue bar” ou banners indesejados */
-    body > div[style*="#e8f0fe"], body > div[style*="rgb(232, 240, 254)"] {
-      display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;
-    }
+    /* Esconde banners azuis do Docs/iOS se aparecerem */
+    body>div[style*="#e8f0fe"], body>div[style*="rgb(232, 240, 254)"]{display:none!important;height:0!important;overflow:hidden!important;visibility:hidden!important}
+    /* Mini toast p/ erros */
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111;color:#fff;padding:.8rem 1rem;border-radius:12px;font-weight:700;box-shadow:0 10px 26px rgba(0,0,0,.25);display:none;z-index:9999}
   </style>
 </head>
 <body>
@@ -137,19 +66,28 @@
     <footer>Desenvolvido por <b>Alexandre Cavalcante — HD TECH —</b></footer>
   </div>
 
+  <div class="toast" id="toast">Falha</div>
+
   <script>
-    /* ==========
-       ALTERE no GitHub → Coloque aqui o ID do seu deploy do GAS (o mesmo que funciona no navegador)
-       ========== */
-    const API_BASE = "https://script.google.com/macros/s/AKfycbxdBLafYKDOGL3VURl2pRNxpUlunfz4Y4eBkK-WRovXtsvUA4id3jF4gy-eh-Oo7ut43A/exec";
+    /* =========================
+       ALTERE no GitHub (obrigatório):
+       Cole aqui o SEU URL "googleusercontent.com/macros/echo?user_content_key=...&lib=..."
+       (o mesmo que você abriu e apareceu JSON no navegador)
+       ========================= */
+    const API_GOOGLEUSER = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiLFdVRz43iQefIkvIiZqKoUudFM4_C6fXoXtRczdQ44j7ZO89hr_NWyrJlkJx4y...&lib=XXXXXXXX"; // <-- COLE O SEU COMPLETO AQUI
 
-    // (Opcional) se você proteger com key no futuro:
-    const API_KEY = ""; // ex: "RIC-2025" (se não usa, deixe vazio)
+    /* (opcional) mantém o /exec como fallback */
+    const API_EXEC        = "https://script.google.com/macros/s/AKfycbxdBLafYKDOGL3VURl2pRNxpUlunfz4Y4eBkK-WRovXtsvUA4id3jF4gy-eh-Oo7ut43A/exec";
 
-    // ====== HELPERS ======
+    /* Se no futuro você exigir token/KEY, coloque aqui (senão deixe vazio) */
+    const API_KEY = "";
+
+    /* ===== helpers UI ===== */
     const $ = s => document.querySelector(s);
     const elProdutos = $('#produtos');
     const elEstoque  = $('#estoque');
+    const toast = $('#toast');
+    function showToast(msg){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1600); }
 
     function classByLevel(estoque, minimo){
       estoque=Number(estoque||0); minimo=Number(minimo||0);
@@ -161,7 +99,7 @@
     }
 
     function productCard(it){
-      const qtdOpts = Array.from({length:50}, (_ ,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+      const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
       return `
         <div class="card" id="c-${it.codigo}">
           <div class="row" style="width:100%">
@@ -205,46 +143,46 @@
       elEstoque.innerHTML  = items.map(stockCard).join('');
     }
 
-    // ====== API (somente GET – compatível com atalho iOS/Android) ======
-    async function apiList(){
-      const qp = new URLSearchParams({ act:'list', ts: Date.now() });
+    /* ===== chamada robusta: tenta googleusercontent primeiro, depois /exec ===== */
+    const ENDPOINTS = [API_GOOGLEUSER, API_EXEC].filter(Boolean);
+
+    async function callAPI(params){
+      const qp = new URLSearchParams(params);
       if (API_KEY) qp.append('key', API_KEY);
-      const url = `${API_BASE}?${qp.toString()}`;
-      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
+
+      let lastErr;
+      for (const base of ENDPOINTS){
+        if (!base) continue;
+        const url = base + (base.includes('?') ? '&' : '?') + qp.toString() + '&ts=' + Date.now();
+        try{
+          const r = await fetch(url, { method:'GET', mode:'cors', cache:'no-store', redirect:'follow', credentials:'omit' });
+          if(!r.ok){
+            lastErr = new Error(`HTTP ${r.status} em ${new URL(base).host}`);
+            continue;
+          }
+          const data = await r.json();
+          return data;
+        }catch(e){
+          lastErr = e;
+          continue;
+        }
+      }
+      throw lastErr || new Error('Falha geral');
     }
 
-    async function apiMov({ tipo, codigo, qtd, unid, obs }){
-      const qp = new URLSearchParams({
-        act : 'mov',
-        tipo: String(tipo||'ENTRADA'),
-        codigo: String(codigo||''),
-        qtd : String(qtd||'0'),
-        unid: String(unid||'Unidade'),
-        obs : String(obs||'').slice(0,180) // limita para caber em GET
+    /* ===== API ===== */
+    function apiList(){ return callAPI({act:'list'}); }
+    function apiMov({tipo,codigo,qtd,unid,obs}){
+      return callAPI({
+        act:'mov', tipo:String(tipo||'ENTRADA'), codigo:String(codigo||''),
+        qtd:String(qtd||'0'), unid:String(unid||'Unidade'), obs:String((obs||'').slice(0,180))
       });
-      if (API_KEY) qp.append('key', API_KEY);
-      const url = `${API_BASE}?${qp.toString()}`;
-      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
+    }
+    function apiObs({codigo,obs}){
+      return callAPI({act:'obs', codigo:String(codigo||''), obs:String((obs||'').slice(0,180))});
     }
 
-    async function apiObs({ codigo, obs }){
-      const qp = new URLSearchParams({
-        act:'obs',
-        codigo:String(codigo||''),
-        obs: String(obs||'').slice(0,180)
-      });
-      if (API_KEY) qp.append('key', API_KEY);
-      const url = `${API_BASE}?${qp.toString()}`;
-      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      return r.json();
-    }
-
-    // ====== Actions ======
+    /* ===== Actions ===== */
     function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
 
     async function clickMov(tipo, codigo){
@@ -262,38 +200,43 @@
           if(e) e.textContent = res.estoque;
           if(b && it) b.className = 'badge ' + classByLevel(res.estoque, it.minimo||0);
         }else{
-          alert('Falha ao movimentar.');
+          showToast('Falha ao movimentar.');
         }
       }catch(err){
-        alert('Erro: '+(err?.message||err));
+        console.error(err);
+        showToast('Erro ao movimentar: ' + (err?.message||err));
       }
     }
 
     async function clickObs(codigo){
       try{
         const obs = String(document.getElementById('obs-'+codigo)?.value || '').trim();
-        if(!obs){ alert('Escreva a observação.'); return; }
+        if(!obs){ showToast('Escreva a observação.'); return; }
         const res = await apiObs({ codigo, obs });
         if(res && res.ok){
           document.getElementById('obs-'+codigo).value = '';
+          showToast('Observação salva');
         }else{
-          alert('Falha ao salvar observação.');
+          showToast('Falha ao salvar observação.');
         }
       }catch(err){
-        alert('Erro: '+(err?.message||err));
+        console.error(err);
+        showToast('Erro ao salvar: ' + (err?.message||err));
       }
     }
 
-    // ====== Boot ======
+    /* ===== Boot ===== */
     (async function init(){
       try{
         const data = await apiList();
-        if(!data || !data.ok){ throw new Error('Resposta inválida'); }
+        if(!data || !data.ok) throw new Error('Resposta inválida');
         window._items = (data.items||[]).map(x=>Object.assign({},x));
         render(window._items);
       }catch(e){
+        console.error(e);
         elProdutos.textContent = 'Erro ao carregar.';
         elEstoque.textContent  = '—';
+        showToast('Falha ao carregar lista');
       }
     })();
   </script>
