@@ -36,11 +36,21 @@
     .ok{background:linear-gradient(135deg,#7e8dff,#5765ff)}
     .in{background:linear-gradient(135deg,#15d6be,#12b39a)}
     .out{background:linear-gradient(135deg,#ff669d,#ff2d62)}
+    .btn[disabled]{opacity:.6;cursor:not-allowed}
+
     .badge{border-radius:999px;padding:.55rem .9rem;font-weight:900;border:2px solid var(--line);background:#fafaff}
     .b-ok{border-color:#20b27a}.b-warn{border-color:#f2b148}.b-danger{border-color:#ff2d62}
     footer{text-align:center;margin:22px 0 6px;color:#7b80aa;font-weight:700}
     footer b{color:#0f1431}
+    /* Esconde banners azuis do Docs/iOS se aparecerem */
+    body>div[style*="#e8f0fe"], body>div[style*="rgb(232, 240, 254)"]{display:none!important;height:0!important;overflow:hidden!important;visibility:hidden!important}
+    /* Mini toast p/ erros */
     .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111;color:#fff;padding:.8rem 1rem;border-radius:12px;font-weight:700;box-shadow:0 10px 26px rgba(0,0,0,.25);display:none;z-index:9999}
+
+    /* ===== Overlay + Spinner (progresso) ===== */
+    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:saturate(120%) blur(2px);z-index:9998}
+    .spinner{width:86px;height:86px;border-radius:999px;border:8px solid #eee;border-top-color:var(--violet);animation:spin 1s linear infinite;background:#fff;box-shadow:0 20px 46px rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.18)}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -63,19 +73,26 @@
     <footer>Desenvolvido por <b>Alexandre Cavalcante — HD TECH —</b></footer>
   </div>
 
+  <!-- Overlay de progresso -->
+  <div class="overlay" id="overlay"><div class="spinner" aria-label="Carregando"></div></div>
   <div class="toast" id="toast">Falha</div>
 
   <script>
-    /* ALTERE no GitHub:
-       Agora o endpoint oficial é apenas o /exec do GAS implantado como "Anyone"
-    */
+    /* =========================
+       ALTERE no GitHub (se publicar novo GAS):
+       Deixe o seu endpoint /exec aqui.
+       ========================= */
     const API_EXEC = "https://script.google.com/macros/s/AKfycbxA2iQBbqP3HBtIA0IoNKuhPogdmjoHQoJvG-VGL6lSy5HlsyJNIpcBF5o38ARTpleMow/exec";
 
+    /* ===== helpers UI ===== */
     const $ = s => document.querySelector(s);
     const elProdutos = $('#produtos');
     const elEstoque  = $('#estoque');
     const toast = $('#toast');
+    const overlay = $('#overlay');
+
     function showToast(msg){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1600); }
+    function showOverlay(v){ overlay.style.display = v ? 'flex' : 'none'; }
 
     function classByLevel(estoque, minimo){
       estoque=Number(estoque||0); minimo=Number(minimo||0);
@@ -131,22 +148,37 @@
       elEstoque.innerHTML  = items.map(stockCard).join('');
     }
 
+    /* ===== chamadas ===== */
     async function callAPI(params){
       const qp = new URLSearchParams(params);
-      const url = API_EXEC + "?" + qp.toString() + "&ts=" + Date.now();
-      const r = await fetch(url, { method:'GET', mode:'cors', cache:'no-store', credentials:'omit' });
-      if(!r.ok) throw new Error("HTTP "+r.status);
+      const url = API_EXEC + '?' + qp.toString() + '&ts=' + Date.now();
+      const r = await fetch(url, { method:'GET', mode:'cors', cache:'no-store', redirect:'follow', credentials:'omit' });
+      if(!r.ok) throw new Error('HTTP '+r.status);
       return r.json();
     }
-
     function apiList(){ return callAPI({act:'list'}); }
-    function apiMov({tipo,codigo,qtd,unid,obs}){ return callAPI({act:'mov', tipo,codigo,qtd,unid,obs}); }
-    function apiObs({codigo,obs}){ return callAPI({act:'obs', codigo, obs}); }
+    function apiMov({tipo,codigo,qtd,unid,obs}){
+      return callAPI({act:'mov', tipo, codigo, qtd, unid, obs});
+    }
+    function apiObs({codigo,obs}){
+      return callAPI({act:'obs', codigo, obs});
+    }
 
+    /* ===== util ===== */
     function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
+    function setButtonsDisabled(codigo, disabled){
+      const ids = [`obs-${codigo}`];
+      const btns = Array.from(document.querySelectorAll(`#c-${codigo} .btn`));
+      btns.forEach(b=>b.disabled = disabled);
+      const sel = document.querySelectorAll(`#c-${codigo} select, #c-${codigo} input`);
+      sel.forEach(el=>el.disabled = disabled);
+    }
 
+    /* ===== Actions ===== */
     async function clickMov(tipo, codigo){
       try{
+        setButtonsDisabled(codigo, true);
+        showOverlay(true);
         const qtd  = Number(document.getElementById('qty-'+codigo)?.value || 1);
         const unid = String(document.getElementById('tipo-'+codigo)?.value || 'Unidade');
         const obs  = String(document.getElementById('obs-'+codigo)?.value || '');
@@ -165,6 +197,9 @@
       }catch(err){
         console.error(err);
         showToast('Erro ao movimentar: ' + (err?.message||err));
+      }finally{
+        showOverlay(false);
+        setButtonsDisabled(codigo, false);
       }
     }
 
@@ -172,6 +207,8 @@
       try{
         const obs = String(document.getElementById('obs-'+codigo)?.value || '').trim();
         if(!obs){ showToast('Escreva a observação.'); return; }
+        setButtonsDisabled(codigo, true);
+        showOverlay(true);
         const res = await apiObs({ codigo, obs });
         if(res && res.ok){
           document.getElementById('obs-'+codigo).value = '';
@@ -182,11 +219,16 @@
       }catch(err){
         console.error(err);
         showToast('Erro ao salvar: ' + (err?.message||err));
+      }finally{
+        showOverlay(false);
+        setButtonsDisabled(codigo, false);
       }
     }
 
+    /* ===== Boot ===== */
     (async function init(){
       try{
+        showOverlay(true);
         const data = await apiList();
         if(!data || !data.ok) throw new Error('Resposta inválida');
         window._items = (data.items||[]).map(x=>Object.assign({},x));
@@ -196,6 +238,8 @@
         elProdutos.textContent = 'Erro ao carregar.';
         elEstoque.textContent  = '—';
         showToast('Falha ao carregar lista');
+      }finally{
+        showOverlay(false);
       }
     })();
   </script>
