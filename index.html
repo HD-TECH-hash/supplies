@@ -111,7 +111,7 @@
     }
     footer b{color:#0f1431}
 
-    /* iOS “Docs blue bar” ou banners indesejados (só pra garantir) */
+    /* iOS “Docs blue bar” ou banners indesejados */
     body > div[style*="#e8f0fe"], body > div[style*="rgb(232, 240, 254)"] {
       display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;
     }
@@ -138,8 +138,13 @@
   </div>
 
   <script>
-    // ====== CONFIG ======
+    /* ==========
+       ALTERE no GitHub → Coloque aqui o ID do seu deploy do GAS (o mesmo que funciona no navegador)
+       ========== */
     const API_BASE = "https://script.google.com/macros/s/AKfycbxdBLafYKDOGL3VURl2pRNxpUlunfz4Y4eBkK-WRovXtsvUA4id3jF4gy-eh-Oo7ut43A/exec";
+
+    // (Opcional) se você proteger com key no futuro:
+    const API_KEY = ""; // ex: "RIC-2025" (se não usa, deixe vazio)
 
     // ====== HELPERS ======
     const $ = s => document.querySelector(s);
@@ -171,7 +176,7 @@
                 <option value="Litro">Litro</option>
               </select>
               <select class="qty" id="qty-${it.codigo}">${qtdOpts}</select>
-              <input class="obs" id="obs-${it.codigo}" placeholder="Obs/Justificativa" />
+              <input class="obs" id="obs-${it.codigo}" placeholder="Obs/Justificativa" maxlength="180" />
               <button class="btn ok"  onclick="clickObs('${it.codigo}')">OK</button>
               <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
               <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
@@ -200,28 +205,41 @@
       elEstoque.innerHTML  = items.map(stockCard).join('');
     }
 
-    // ====== API ======
+    // ====== API (somente GET – compatível com atalho iOS/Android) ======
     async function apiList(){
-      const url = API_BASE + "?act=list&ts=" + Date.now();
-      const r = await fetch(url, { method:"GET", credentials:"omit" });
+      const qp = new URLSearchParams({ act:'list', ts: Date.now() });
+      if (API_KEY) qp.append('key', API_KEY);
+      const url = `${API_BASE}?${qp.toString()}`;
+      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
       if(!r.ok) throw new Error("HTTP "+r.status);
       return r.json();
     }
-    async function apiMov(params){
-      const r = await fetch(API_BASE + "?act=mov", {
-        method: "POST",
-        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
-        body: new URLSearchParams(params)
+
+    async function apiMov({ tipo, codigo, qtd, unid, obs }){
+      const qp = new URLSearchParams({
+        act : 'mov',
+        tipo: String(tipo||'ENTRADA'),
+        codigo: String(codigo||''),
+        qtd : String(qtd||'0'),
+        unid: String(unid||'Unidade'),
+        obs : String(obs||'').slice(0,180) // limita para caber em GET
       });
+      if (API_KEY) qp.append('key', API_KEY);
+      const url = `${API_BASE}?${qp.toString()}`;
+      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
       if(!r.ok) throw new Error("HTTP "+r.status);
       return r.json();
     }
-    async function apiObs(params){
-      const r = await fetch(API_BASE + "?act=obs", {
-        method: "POST",
-        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
-        body: new URLSearchParams(params)
+
+    async function apiObs({ codigo, obs }){
+      const qp = new URLSearchParams({
+        act:'obs',
+        codigo:String(codigo||''),
+        obs: String(obs||'').slice(0,180)
       });
+      if (API_KEY) qp.append('key', API_KEY);
+      const url = `${API_BASE}?${qp.toString()}`;
+      const r = await fetch(url, { method:'GET', credentials:'omit', cache:'no-store' });
       if(!r.ok) throw new Error("HTTP "+r.status);
       return r.json();
     }
