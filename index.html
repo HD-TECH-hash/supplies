@@ -1,247 +1,418 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#6c4df5" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>📦 Estoque de Materiais Headset</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RIC AI — CRION</title>
+<style>
+  :root{
+    --brand:#2882bb; --brand2:#2a8fcf;
+    --bg:#f7f8fc; --ink:#0f172a; --muted:#667085; --line:#E7EAF3;
+    --lime:#22c55e; --lime2:#a3e635; --danger:#ef4444;
+    --tag:#F2E7FF; --tag-ink:#6D28D9;
+    --card-shadow:0 18px 36px rgba(99,102,241,.12), 0 8px 24px rgba(40,130,187,.10);
+  }
+  *{box-sizing:border-box}  body{margin:0;font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--ink);
+       background:radial-gradient(1200px 520px at -10% -10%, #eaf4ff 0, #ffffff 60%, #f7faff 100%)}
+  .wrap{max-width:1060px;margin:0 auto;padding:18px}
 
-  <link rel="manifest" href="manifest.json">
+  /* header */
+  .hero{position:relative;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+        border-radius:18px;padding:12px 16px;display:flex;align-items:center;justify-content:center;
+        box-shadow:0 24px 56px rgba(40,130,187,.22)}
+  .hero .center-logo{height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px #0002)}
+  .hero .logo{width:120px;height:auto;object-fit:contain;filter:drop-shadow(0 2px 6px #0002)}
+  .left{position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+  .right-img{position:absolute;right:14px;top:50%;transform:translateY(-50%)}
+  .tools{position:absolute;right:150px;top:50%;transform:translateY(-50%);display:flex;gap:10px}
+  .iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid #ffffff40;background:#ffffff1a;
+           display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(4px);transition:.15s}
+  .iconbtn:hover{transform:translateY(-1px);background:#ffffff22}
 
-  <style>
-    :root{
-      --ink:#0f1431; --muted:#7077a3; --violet:#6c4df5; --line:#ecebff;
-      --shadow: 0 32px 60px rgba(108,77,245,.18), 0 12px 28px rgba(17,24,39,.10), 0 2px 6px rgba(17,24,39,.08);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:#fff;color:var(--ink);font:600 16px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
-    .wrap{max-width:1100px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(26px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-    header{display:flex;flex-direction:column;align-items:center;gap:16px;padding:12px 0 8px}
-    .logo{width:108px;height:auto;filter:drop-shadow(0 14px 24px rgba(108,77,245,.26))}
-    h1{margin:0;font-size:clamp(1.8rem,2.6rem,6vw);text-align:center;color:#2a38d9;text-shadow:0 14px 26px rgba(108,77,245,.28);letter-spacing:.2px}
-    .section{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
-    .title{margin:2px 0 14px;text-align:center;font-weight:900;font-size:1.6rem;color:#5b47ee;letter-spacing:.3px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .name{font-size:1.35rem}
-    .code{color:var(--muted)}
-    select,input{font:600 15px/1.2 inherit}
-    .tipo,.qty,.obs{background:#fff;border:1px solid #dcdafc;border-radius:12px;box-shadow:0 10px 18px rgba(108,77,245,.10);padding:.6rem .75rem}
-    .qty{min-width:74px}
-    .obs{min-width:16rem;flex:1}
-    .btn{appearance:none;border:0;border-radius:12px;padding:.65rem .95rem;color:#fff;cursor:pointer;font-weight:800;letter-spacing:.2px;transition:transform .06s ease}
-    .btn:active{transform:scale(.985)}
-    .ok{background:linear-gradient(135deg,#7e8dff,#5765ff)}
-    .in{background:linear-gradient(135deg,#15d6be,#12b39a)}
-    .out{background:linear-gradient(135deg,#ff669d,#ff2d62)}
-    .btn[disabled]{opacity:.6;cursor:not-allowed}
+  /* grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr} .right-img{display:none} }
 
-    .badge{border-radius:999px;padding:.55rem .9rem;font-weight:900;border:2px solid var(--line);background:#fafaff}
-    .b-ok{border-color:#20b27a}.b-warn{border-color:#f2b148}.b-danger{border-color:#ff2d62}
-    footer{text-align:center;margin:22px 0 6px;color:#7b80aa;font-weight:700}
-    footer b{color:#0f1431}
-    /* Esconde banners azuis do Docs/iOS se aparecerem */
-    body>div[style*="#e8f0fe"], body>div[style*="rgb(232, 240, 254)"]{display:none!important;height:0!important;overflow:hidden!important;visibility:hidden!important}
-    /* Mini toast p/ erros */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#111;color:#fff;padding:.8rem 1rem;border-radius:12px;font-weight:700;box-shadow:0 10px 26px rgba(0,0,0,.25);display:none;z-index:9999}
+  /* cards */
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--card-shadow)}
+  .tag{display:inline-flex;align-items:center;gap:8px;background:var(--tag);color:var(--tag-ink);
+       border:1px solid #eadbff;border-radius:999px;padding:6px 12px;font-weight:800;font-size:12px}
+  h2{margin:8px 0 10px;font-size:18px}
+  .row{display:flex;gap:10px;align-items:center}
+  .input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfcff}
+  .btn{appearance:none;border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
+  .btn-search{color:#053; background:linear-gradient(135deg,var(--lime),var(--lime2)); box-shadow:0 10px 22px rgba(34,197,94,.28)}
+  .btn-plain{background:#f7f7fb;color:#111;border:1px solid var(--line)}
+  .btn-danger{background:var(--danger);color:#fff;box-shadow:0 10px 22px rgba(239,68,68,.24)}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .out{white-space:pre-wrap;min-height:120px;border:1px dashed var(--line);border-radius:10px;padding:10px;margin-top:10px;background:#fbfbff}
 
-    /* ===== Overlay + Spinner (progresso) ===== */
-    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:saturate(120%) blur(2px);z-index:9998}
-    .spinner{width:86px;height:86px;border-radius:999px;border:8px solid #eee;border-top-color:var(--violet);animation:spin 1s linear infinite;background:#fff;box-shadow:0 20px 46px rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.18)}
-    @keyframes spin{to{transform:rotate(360deg)}}
-  </style>
+  /* widgets (post-it & calc) */
+  .widget{position:fixed;right:18px;top:82px;z-index:50;display:none}
+  .note{width:220px;background:#fff3b0;border:1px solid #f5d565;border-radius:12px;box-shadow:0 14px 30px #0001;padding:10px}
+  .note textarea{width:100%;height:120px;border:0;background:transparent;outline:none;font:14px/1.45 ui-sans-serif}
+  .calc{width:260px;background:#fff;border:1px solid #dbe0ea;border-radius:12px;box-shadow:0 14px 30px #0001;padding:12px}
+  .calc .screen{border:1px solid var(--line);border-radius:10px;padding:10px;font-weight:700;margin-bottom:10px;background:#f9fbff}
+  .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .key{padding:10px;border-radius:10px;border:1px solid #e6e9f2;background:#f7f8fd;cursor:pointer;text-align:center;font-weight:800}
+  .key.op{background:#eef6ff;border-color:#cfe7ff}
+  .key.eq{background:linear-gradient(135deg,var(--lime),var(--lime2));color:#053}
+
+  /* footer */
+  footer{margin:18px 0 8px;text-align:center}
+  .footnote{font-size:12px;color:#94a3b8}
+</style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <img class="logo" src="logo.png" alt="Headset Brasil">
-      <h1>Estoque de Materiais Headset</h1>
-    </header>
+    <!-- HEADER -->
+    <div class="hero">
+      <img class="logo left" src="icon.png"
+           onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/HD-TECH-hash/Ric-crion/main/icon.png';" alt="Logo esquerdo">
+      <img class="center-logo" src="RICai.png"
+           onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/HD-TECH-hash/Ric-crion/main/RICai.png';" alt="RIC AI CRION">
+      <div class="tools">
+        <!-- Post-it (amarelo) -->
+        <button id="toggleNote" class="iconbtn" title="Post-it">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M8 3h8a3 3 0 0 1 3 3v7l-7 7H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z" stroke="#FFD54F" stroke-width="2"/>
+            <path d="M19 13h-4a3 3 0 0 0-3 3v4" stroke="#FFD54F" stroke-width="2"/>
+          </svg>
+        </button>
+        <!-- Calculadora (verde) -->
+        <button id="toggleCalc" class="iconbtn" title="Calculadora">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="3" width="16" height="18" rx="2" stroke="#22C55E" stroke-width="2"/>
+            <rect x="7" y="6" width="10" height="3" rx="1" fill="#22C55E"/>
+            <path d="M8 12h2M8 16h2M12 12h2M12 16h2M16 12h2M16 16h2" stroke="#22C55E" stroke-width="2"/>
+          </svg>
+        </button>
+      </div>
+      <img class="logo right-img" src="icon2.png"
+           onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/HD-TECH-hash/Ric-crion/main/icon2.png';" alt="Logo direito">
+    </div>
 
-    <section class="section">
-      <div class="title">Produtos</div>
-      <div id="produtos">—</div>
-    </section>
+    <!-- WIDGETS -->
+    <div id="noteWrap" class="widget note">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <b>Post-it</b>
+        <button id="clearNote" class="btn btn-plain" style="padding:4px 8px">Limpar</button>
+      </div>
+      <textarea id="noteArea" placeholder="Anote algo..."></textarea>
+    </div>
 
-    <section class="section">
-      <div class="title">Estoque Atual</div>
-      <div id="estoque">—</div>
-    </section>
+    <div id="calcWrap" class="widget calc">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <b>Calculadora</b>
+        <button id="closeCalc" class="btn btn-plain" style="padding:4px 8px">Fechar</button>
+      </div>
+      <div class="screen" id="scr">0</div>
+      <div class="keys" id="keys">
+        <div class="key op" data-k="C">C</div>
+        <div class="key op" data-k="±">±</div>
+        <div class="key op" data-k="%">%</div>
+        <div class="key op" data-k="/">÷</div>
+        <div class="key" data-k="7">7</div><div class="key" data-k="8">8</div><div class="key" data-k="9">9</div><div class="key op" data-k="*">×</div>
+        <div class="key" data-k="4">4</div><div class="key" data-k="5">5</div><div class="key" data-k="6">6</div><div class="key op" data-k="-">−</div>
+        <div class="key" data-k="1">1</div><div class="key" data-k="2">2</div><div class="key" data-k="3">3</div><div class="key op" data-k="+">+</div>
+        <div class="key" data-k="0">0</div><div class="key" data-k="00">00</div><div class="key" data-k=".">.</div><div class="key eq" data-k="=">=</div>
+      </div>
+    </div>
 
-    <footer>Desenvolvido por <b>Alexandre Cavalcante — HD TECH —</b></footer>
+    <!-- GRID -->
+    <div class="grid">
+      <!-- ALERTA -->
+      <section class="card">
+        <div class="tag">ALERTA</div>
+        <h2>Controle de alerta</h2>
+        <div class="row">
+          <button id="btnAlert" class="btn btn-search">Pesquisar</button>
+          <button id="btnAdjust" class="btn btn-plain">Ajustar</button>
+        </div>
+        <div class="hint" id="alertBusy" style="display:none">
+          <div class="busy"><div class="spinner"></div><div>Pesquisando alerta...</div></div>
+          <div class="bar" style="margin-top:6px"></div>
+        </div>
+        <div id="alertMsg"  style="display:none;font-size:22px;font-weight:900;color:#b91c1c;text-align:center;margin-top:8px">—</div>
+        <div id="alertResp" style="display:none;font-size:13px;font-weight:600;color:#334155;text-align:center;margin-top:4px;text-transform:lowercase">—</div>
+      </section>
+
+      <!-- SITES -->
+      <section class="card">
+        <div class="tag">SITES OFICIAIS</div>
+        <h2>CRION COMERCIAL (AFFIX, ALTER e CONECTA PLAN)</h2>
+        <div class="row" style="margin-top:6px">
+          <input id="qSites" class="input" placeholder="Digite sua pergunta .....">
+          <button id="btnSites" class="btn btn-search">Pesquisar</button>
+        </div>
+        <div class="hint" id="sitesBusy" style="display:none">
+          <div class="busy"><div class="spinner"></div><div>Pesquisando...</div></div>
+          <div class="bar" style="margin-top:6px"></div>
+        </div>
+        <div id="outSites" class="out">—</div>
+      </section>
+
+      <!-- PDFs -->
+      <section class="card">
+        <div class="tag">PDFs</div>
+        <h2>Manuais do Corretor (Sharepoint)</h2>
+        <p class="hint">Busca rápida no texto extraído dos PDFs (indexados).</p>
+        <div class="row">
+          <input id="qPDF" class="input" placeholder="Ex.: Affix, Coparticipação, Carência 30 dias">
+          <button id="btnPDF" class="btn btn-search" style="min-width:112px">Pesquisar</button>
+        </div>
+        <div class="hint" id="pdfBusy" style="display:none">
+          <div class="busy"><div class="spinner"></div><div>Listando arquivos...</div></div>
+          <div class="bar" style="margin-top:6px"></div>
+        </div>
+        <div id="pdfStatus" class="hint" style="margin-top:6px">—</div>
+        <ul id="pdfList" style="margin:8px 0 0;padding:0;list-style:none"></ul>
+      </section>
+
+      <!-- CRION -->
+      <section class="card">
+        <div class="tag">PROCEDIMENTOS CRION</div>
+        <h2>Procedimentos</h2>
+        <p class="hint">Material de Treinamento, Quiz, Alertas &gt; 30 dias e demais informações.</p>
+        <div class="row">
+          <input id="qCRION" class="input" placeholder="Ex.: Onboarding, Retenção, URA, Script de Cobrança, Affix">
+          <button id="btnCRION" class="btn btn-search" style="min-width:112px">Pesquisar</button>
+          <button id="btnReIdxCRION" class="btn btn-danger" style="min-width:112px">Reindexar</button>
+        </div>
+        <div class="hint" id="crionBusy" style="display:none">
+          <div class="busy"><div class="spinner"></div><div>Listando procedimentos...</div></div>
+          <div class="bar" style="margin-top:6px"></div>
+        </div>
+        <div id="crionStatus" class="hint" style="margin-top:6px">—</div>
+        <ul id="crionList" style="margin:8px 0 0;padding:0;list-style:none"></ul>
+      </section>
+    </div>
+
+    <footer><span class="footnote">Desenvolvido por Alexandre Cavalcante V3.0</span></footer>
   </div>
 
-  <!-- Overlay de progresso -->
-  <div class="overlay" id="overlay"><div class="spinner" aria-label="Carregando"></div></div>
-  <div class="toast" id="toast">Falha</div>
+  <!-- Modais ALERTA -->
+  <div id="modal1" class="modal" style="position:fixed;inset:0;background:#00000059;display:none;align-items:center;justify-content:center;z-index:1000">
+    <div class="modal-box" style="width:min(520px,92vw);border-radius:14px;padding:14px;background:#fff;border:1px solid #ffd6d6">
+      <h3 style="margin:0 0 8px;color:#991b1b">ALERTA DA OPERAÇÃO</h3>
+      <input id="m1text" class="input" placeholder="Digite o texto do alerta (vermelho)">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn btn-plain" onclick="closeM(1)">Cancelar</button>
+        <button id="m1ok" class="btn btn-search" onclick="goM2()">Continuar</button>
+      </div>
+    </div>
+  </div>
+  <div id="modal2" class="modal" style="position:fixed;inset:0;background:#00000059;display:none;align-items:center;justify-content:center;z-index:1000">
+    <div class="modal-box" style="width:min(520px,92vw);border-radius:14px;padding:14px;background:#fff;border:1px solid #ffdaba">
+      <h3 style="margin:0 0 8px">Responsável</h3>
+      <input id="m2text" class="input" placeholder="Primeira letra maiúscula (ex.: Ale)">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn btn-plain" onclick="backM1()">Voltar</button>
+        <button id="m2ok" class="btn btn-search" onclick="saveAlert()">Salvar</button>
+      </div>
+    </div>
+  </div>
+  <div id="modal3" class="modal" style="position:fixed;inset:0;background:#00000059;display:none;align-items:center;justify-content:center;z-index:1000">
+    <div class="modal-box" style="width:min(380px,92vw);border-radius:14px;padding:14px;background:#fff;border:1px solid #d9f7b8;text-align:center">
+      <h3 style="margin:0 0 8px">ALERTA AJUSTADO</h3>
+      <div style="margin:6px 0">✔️</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:4px">
+        <button class="btn btn-search" onclick="closeM(3)">OK</button>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    /* =========================
-       ALTERE no GitHub (se publicar novo GAS):
-       Deixe o seu endpoint /exec aqui.
-       ========================= */
-    const API_EXEC = "https://script.google.com/macros/s/AKfycbxA2iQBbqP3HBtIA0IoNKuhPogdmjoHQoJvG-VGL6lSy5HlsyJNIpcBF5o38ARTpleMow/exec";
+<script>
+/*** CONFIG ***/
+const APP_URL = 'https://script.google.com/macros/s/AKfycbw6uzRI4069YZmoizZFB0p8XmPqw1dw_IfxFaKGd33_3HQDF5RbBc-4_dHLj1YmCNGDgQ/exec';
 
-    /* ===== helpers UI ===== */
-    const $ = s => document.querySelector(s);
-    const elProdutos = $('#produtos');
-    const elEstoque  = $('#estoque');
-    const toast = $('#toast');
-    const overlay = $('#overlay');
+/*** HELPERS ***/
+const $ = s => document.querySelector(s);
+const show = (el, on=true)=>{ if(!el) return; el.style.display = on? '' : 'none'; };
+function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+function cleanName(n){ return String(n||'').replace(/^(OCR_TMP_|TMP_SLIDES_)+/ig,''); }
+function link(url, txt){ return `<a href="${url}" target="_blank" rel="noopener">${esc(txt||url)}</a>`; }
+function humanSize(b){ if(!b||b<=0) return "—"; const u=["B","KB","MB","GB"]; let i=0; while(b>=1024&&i<u.length-1){ b/=1024; i++; } return b.toFixed(1)+" "+u[i]; }
 
-    function showToast(msg){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none',1600); }
-    function showOverlay(v){ overlay.style.display = v ? 'flex' : 'none'; }
-
-    function classByLevel(estoque, minimo){
-      estoque=Number(estoque||0); minimo=Number(minimo||0);
-      if(minimo>0){
-        if(estoque <= 0.25*minimo) return 'b-danger';
-        if(estoque <  minimo)      return 'b-warn';
-      }
-      return 'b-ok';
-    }
-
-    function productCard(it){
-      const qtdOpts = Array.from({length:50}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
-      return `
-        <div class="card" id="c-${it.codigo}">
-          <div class="row" style="width:100%">
-            <div>
-              <div class="name">${it.nome}</div>
-              <div class="code">Cód: ${it.codigo} • Estoque: <b id="left-${it.codigo}">${it.estoque ?? 0}</b></div>
-            </div>
-            <div class="row" style="flex:1; min-width:260px">
-              <select class="tipo" id="tipo-${it.codigo}">
-                <option value="Unidade">Unidade</option>
-                <option value="CX">CX</option>
-                <option value="Litro">Litro</option>
-              </select>
-              <select class="qty" id="qty-${it.codigo}">${qtdOpts}</select>
-              <input class="obs" id="obs-${it.codigo}" placeholder="Obs/Justificativa" maxlength="180" />
-              <button class="btn ok"  onclick="clickObs('${it.codigo}')">OK</button>
-              <button class="btn in"  onclick="clickMov('ENTRADA','${it.codigo}')">Entrada</button>
-              <button class="btn out" onclick="clickMov('SAÍDA','${it.codigo}')">Saída</button>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function stockCard(it){
-      return `
-        <div class="card">
-          <div class="row" style="width:100%">
-            <div>
-              <div class="name">${it.nome}</div>
-              <div class="code">Cód: ${it.codigo}</div>
-            </div>
-            <div class="badge ${classByLevel(it.estoque, it.minimo)}" id="b-${it.codigo}">
-              Estoque: <span id="est-${it.codigo}">${it.estoque ?? 0}</span>
-            </div>
-          </div>
-        </div>`;
-    }
-
-    function render(items){
-      elProdutos.innerHTML = items.map(productCard).join('');
-      elEstoque.innerHTML  = items.map(stockCard).join('');
-    }
-
-    /* ===== chamadas ===== */
-    async function callAPI(params){
-      const qp = new URLSearchParams(params);
-      const url = API_EXEC + '?' + qp.toString() + '&ts=' + Date.now();
-      const r = await fetch(url, { method:'GET', mode:'cors', cache:'no-store', redirect:'follow', credentials:'omit' });
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    }
-    function apiList(){ return callAPI({act:'list'}); }
-    function apiMov({tipo,codigo,qtd,unid,obs}){
-      return callAPI({act:'mov', tipo, codigo, qtd, unid, obs});
-    }
-    function apiObs({codigo,obs}){
-      return callAPI({act:'obs', codigo, obs});
-    }
-
-    /* ===== util ===== */
-    function findItem(cod){ return (window._items||[]).find(x=>x.codigo===cod); }
-    function setButtonsDisabled(codigo, disabled){
-      const ids = [`obs-${codigo}`];
-      const btns = Array.from(document.querySelectorAll(`#c-${codigo} .btn`));
-      btns.forEach(b=>b.disabled = disabled);
-      const sel = document.querySelectorAll(`#c-${codigo} select, #c-${codigo} input`);
-      sel.forEach(el=>el.disabled = disabled);
-    }
-
-    /* ===== Actions ===== */
-    async function clickMov(tipo, codigo){
+/*** Dispatcher: GAS (google.script.run) OU GitHub (fetch) ***/
+function call(endpoint, payload){
+  if (window.google && google.script && google.script.run){
+    return new Promise((resolve,reject)=>{
+      const r = google.script.run.withSuccessHandler(res=>{
+        if(endpoint==='chat' && typeof res==='string') resolve({ok:true, text:res});
+        else resolve(res);
+      }).withFailureHandler(err=>reject(err));
       try{
-        setButtonsDisabled(codigo, true);
-        showOverlay(true);
-        const qtd  = Number(document.getElementById('qty-'+codigo)?.value || 1);
-        const unid = String(document.getElementById('tipo-'+codigo)?.value || 'Unidade');
-        const obs  = String(document.getElementById('obs-'+codigo)?.value || '');
-        const res  = await apiMov({ tipo, codigo, qtd, unid, obs });
-        if(res && res.ok){
-          const it = findItem(codigo); if(it) it.estoque = res.estoque;
-          const l = document.getElementById('left-'+codigo);
-          const e = document.getElementById('est-'+codigo);
-          const b = document.getElementById('b-'+codigo);
-          if(l) l.textContent = res.estoque;
-          if(e) e.textContent = res.estoque;
-          if(b && it) b.className = 'badge ' + classByLevel(res.estoque, it.minimo||0);
-        }else{
-          showToast('Falha ao movimentar.');
+        switch(endpoint){
+          case 'getalert': r.apiGetAlert(); break;
+          case 'adjustalert': r.apiAdjustAlert(payload.mensagem, payload.responsavel); break;
+          case 'searchindexed': r.apiSearchIndexed(payload.q); break;
+          case 'fetchindexedsnippets': r.apiFetchIndexedSnippets(payload.sessionId, payload.from, payload.limit); break;
+          case 'searchcrion': r.apiSearchCrion(payload.q); break;
+          case 'fetchcrionsnippets': r.apiFetchCrionSnippets(payload.sessionId, payload.from, payload.limit); break;
+          case 'reindexcrion': r.apiReindexCrion(); break;
+          case 'chat': r.chatServer(payload.q, navigator.userAgent||''); break;
+          default: reject('endpoint não mapeado');
         }
-      }catch(err){
-        console.error(err);
-        showToast('Erro ao movimentar: ' + (err?.message||err));
-      }finally{
-        showOverlay(false);
-        setButtonsDisabled(codigo, false);
-      }
-    }
+      }catch(e){ reject(e); }
+    });
+  }
+  const url = APP_URL + "?fn=" + encodeURIComponent(endpoint);
+  return fetch(url, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload||{}) })
+    .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); });
+}
 
-    async function clickObs(codigo){
-      try{
-        const obs = String(document.getElementById('obs-'+codigo)?.value || '').trim();
-        if(!obs){ showToast('Escreva a observação.'); return; }
-        setButtonsDisabled(codigo, true);
-        showOverlay(true);
-        const res = await apiObs({ codigo, obs });
-        if(res && res.ok){
-          document.getElementById('obs-'+codigo).value = '';
-          showToast('Observação salva');
-        }else{
-          showToast('Falha ao salvar observação.');
-        }
-      }catch(err){
-        console.error(err);
-        showToast('Erro ao salvar: ' + (err?.message||err));
-      }finally{
-        showOverlay(false);
-        setButtonsDisabled(codigo, false);
-      }
-    }
+/*** MODAIS ***/
+function openM(id){ $('#modal'+id).style.display='flex'; }
+function closeM(id){ $('#modal'+id).style.display='none'; }
+function backM1(){ closeM(2); openM(1); }
 
-    /* ===== Boot ===== */
-    (async function init(){
-      try{
-        showOverlay(true);
-        const data = await apiList();
-        if(!data || !data.ok) throw new Error('Resposta inválida');
-        window._items = (data.items||[]).map(x=>Object.assign({},x));
-        render(window._items);
-      }catch(e){
-        console.error(e);
-        elProdutos.textContent = 'Erro ao carregar.';
-        elEstoque.textContent  = '—';
-        showToast('Falha ao carregar lista');
-      }finally{
-        showOverlay(false);
+/*** ALERTA ***/
+$('#btnAlert').addEventListener('click', async ()=>{
+  const msg=$('#alertMsg'), resp=$('#alertResp');
+  show(msg,false); show(resp,false); show($('#alertBusy'),true);
+  try{
+    const r = await call('getalert',{});
+    if(!r || r.ok===false){ msg.textContent="Falha ao consultar."; show(msg,true); return; }
+    if(!r.found){ msg.textContent="Sem recado no momento."; show(msg,true); return; }
+    msg.textContent = "🚨 " + String(r.mensagem||"—").toUpperCase(); show(msg,true);
+    if(r.responsavel){ resp.textContent = String(r.responsavel||"").toLowerCase(); show(resp,true); }
+  }catch(e){ msg.textContent="Erro: "+e.message; show(msg,true);
+  }finally{ show($('#alertBusy'),false); }
+});
+
+let _newAlert="", _newResp="";
+$('#btnAdjust').addEventListener('click', ()=>{ _newAlert=""; _newResp=""; $('#m1text').value=""; $('#m2text').value=""; openM(1); });
+function goM2(){ _newAlert = ($('#m1text').value||"").trim(); if(!_newAlert){ $('#m1text').focus(); return; } closeM(1); openM(2); }
+$('#m2text').addEventListener('input', e=>{ const v=e.target.value; e.target.value = v? v[0].toUpperCase()+v.slice(1).toLowerCase():v; });
+async function saveAlert(){
+  _newResp = $('#m2text').value.trim();
+  try{
+    $('#m2ok').disabled=true; $('#m2ok').textContent='Salvando...';
+    await call('adjustalert',{mensagem:_newAlert, responsavel:_newResp});
+    closeM(2); openM(3);
+  }catch(e){ closeM(2); alert("Falha ao ajustar: "+e.message);
+  }finally{ $('#m2ok').disabled=false; $('#m2ok').textContent='Salvar'; }
+}
+
+/*** SITES (chat) ***/
+$('#btnSites').addEventListener('click', async ()=>{
+  const q=($('#qSites').value||'').trim();
+  if(!q){ $('#outSites').textContent='Digite a pergunta.'; return; }
+  show($('#sitesBusy'),true); $('#outSites').textContent='—';
+  try{
+    const qRich = q + " — FORMATO: responda em português e liste as URLs oficiais no final. Substitua notas por: 'Fontes oficiais Affix, Alter, Hapvida'.";
+    const r = await call('chat',{q:qRich});
+    const txt = (r && r.text) ? r.text : '—';
+    const html = String(txt).replace(/(https?:\/\/[^\s]+)/g, m=>`<a href="${m}" target="_blank" rel="noopener">${m}</a>`);
+    $('#outSites').innerHTML = html;
+  }catch(e){ $('#outSites').textContent='Erro: '+e.message;
+  }finally{ show($('#sitesBusy'),false); }
+});
+
+/*** PDFs ***/
+$('#btnPDF').addEventListener('click', doPDF);
+$('#qPDF').addEventListener('keydown', e=>{ if(e.key==='Enter') doPDF(); });
+async function doPDF(){
+  const q=($('#qPDF').value||'').trim();
+  if(!q){ $('#pdfStatus').textContent='Digite um termo.'; return; }
+  show($('#pdfBusy'),true); $('#pdfStatus').textContent='Listando arquivos...'; $('#pdfList').innerHTML="";
+  try{
+    const res = await call('searchindexed',{q});
+    if(!res || res.ok===false){ $('#pdfStatus').textContent='Erro ao buscar: '+(res&&res.message?res.message:''); return; }
+    const items=res.items||[]; $('#pdfStatus').textContent=`Resultados: ${items.length}`;
+    const frag=document.createDocumentFragment();
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li'); li.style.padding="10px 0"; li.style.borderTop="1px solid var(--line)"; li.id='pdf_'+idx;
+      const meta = `<div class="hint">Tamanho: ${humanSize(it.size||0)} • Atualizado: ${it.updated? new Date(it.updated).toLocaleString(): "—"}</div>`;
+      li.innerHTML=`<div><b>${esc(cleanName(it.name))}</b> • ${link(it.url,'Abrir')}</div>${meta}
+                    <div class="hint" id="snip_pdf_${idx}">Carregando prévias…</div>`;
+      frag.appendChild(li);
+    });
+    $('#pdfList').appendChild(frag);
+    if(items.length){
+      let from=0;
+      while(from < items.length){
+        const r = await call('fetchindexedsnippets',{sessionId:res.sessionId, from, limit:6});
+        (r.items||[]).forEach(row=>{
+          const el=$('#snip_pdf_'+row.index);
+          el.innerHTML=(row.snippets && row.snippets.length)? row.snippets.map(s=>`<div style="color:#374151;margin:6px 0">${esc(s)}</div>`).join("") : '<span class="hint">—</span>';
+        });
+        from = r.to;
       }
-    })();
-  </script>
+      $('#pdfStatus').textContent += " • prévias completas";
+    }
+  }catch(e){ $('#pdfStatus').textContent='Erro: '+e.message;
+  }finally{ show($('#pdfBusy'),false); }
+}
+
+/*** CRION ***/
+$('#btnCRION').addEventListener('click', doCRION);
+$('#qCRION').addEventListener('keydown', e=>{ if(e.key==='Enter') doCRION(); });
+$('#btnReIdxCRION').addEventListener('click', async ()=>{
+  $('#crionStatus').textContent='Reindexando CRION…'; show($('#crionBusy'),true);
+  try{ const r=await call('reindexcrion',{}); $('#crionStatus').textContent="Index CRION: "+(r && r.ok ? "OK" : "Falhou"); }
+  catch(e){ $('#crionStatus').textContent='Erro: '+e.message; }
+  finally{ show($('#crionBusy'),false); }
+});
+async function doCRION(){
+  const q=($('#qCRION').value||'').trim();
+  if(!q){ $('#crionStatus').textContent='Digite um termo.'; return; }
+  show($('#crionBusy'),true); $('#crionStatus').textContent='Listando arquivos…'; $('#crionList').innerHTML="";
+  try{
+    const res = await call('searchcrion',{q});
+    if(!res || res.ok===false){ $('#crionStatus').textContent='Erro ao buscar: '+(res&&res.message?res.message:''); return; }
+    const items=res.items||[]; $('#crionStatus').textContent=`Resultados: ${items.length}`;
+    const frag=document.createDocumentFragment();
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li'); li.style.padding="10px 0"; li.style.borderTop="1px solid var(--line)"; li.id='crion_'+idx;
+      const meta  = `<div class="hint">Tamanho: ${humanSize(it.size||0)} • Atualizado: ${it.updated? new Date(it.updated).toLocaleString(): "—"}</div>`;
+      li.innerHTML=`<div><b>${esc(cleanName(it.name))}</b> • ${link(it.url,'Abrir')}</div>${meta}
+                    <div class="hint" id="snip_crion_${idx}">Carregando prévias…</div>`;
+      frag.appendChild(li);
+    });
+    $('#crionList').appendChild(frag);
+    if(items.length){
+      let from=0;
+      while(from < items.length){
+        const r = await call('fetchcrionsnippets',{sessionId:res.sessionId, from, limit:6});
+        (r.items||[]).forEach(row=>{
+          const el=$('#snip_crion_'+row.index);
+          el.innerHTML=(row.snippets && row.snippets.length)? row.snippets.map(s=>`<div style="color:#374151;margin:6px 0">${esc(s)}</div>`).join("") : '<span class="hint">—</span>';
+        });
+        from = r.to;
+      }
+      $('#crionStatus').textContent += " • prévias completas";
+    }
+  }catch(e){ $('#crionStatus').textContent='Erro: '+e.message;
+  }finally{ show($('#crionBusy'),false); }
+}
+
+/*** Widgets ***/
+const noteWrap = $('#noteWrap'), noteArea = $('#noteArea');
+$('#toggleNote').onclick = ()=>{ noteWrap.style.display = noteWrap.style.display ? "" : "block"; if(noteWrap.style.display) noteArea.focus(); };
+$('#clearNote').onclick = ()=>{ noteArea.value=""; localStorage.removeItem('ric_note'); };
+noteArea.value = localStorage.getItem('ric_note') || "";
+noteArea.addEventListener('input', ()=> localStorage.setItem('ric_note', noteArea.value));
+
+const calc = { scr: $('#scr'), buf:"0", op:null, fresh:true };
+function refresh(){ $('#scr').textContent = calc.buf; }
+function press(k){
+  if(/\d/.test(k)){ calc.buf = (calc.fresh||calc.buf==="0")? k : calc.buf+k; calc.fresh=false; refresh(); return; }
+  if(k==="00"){ press("0"); press("0"); return; }
+  if(k==="."){ if(!calc.buf.includes(".")) calc.buf += "."; calc.fresh=false; refresh(); return; }
+  if(k==="C"){ calc.buf="0"; calc.op=null; calc.fresh=true; refresh(); return; }
+  if(k==="±"){ if(calc.buf!=="0") calc.buf = calc.buf.startsWith("-")? calc.buf.slice(1):"-"+calc.buf; refresh(); return; }
+  if(k==="%"){ calc.buf = String(parseFloat(calc.buf)/100); refresh(); return; }
+  if("+-*/".includes(k)){ calc.mem=parseFloat(calc.buf); calc.op=k; calc.fresh=true; return; }
+  if(k==="=" && calc.op){ const a=calc.mem, b=parseFloat(calc.buf);
+    let v = 0; switch(calc.op){case "+":v=a+b;break;case "-":v=a-b;break;case "*":v=a*b;break;case "/":v=b===0? "Erro" : a/b;break;}
+    calc.buf = String(v); calc.op=null; calc.fresh=true; refresh();
+  }
+}
+$('#keys').addEventListener('click', e=>{ const k=e.target.dataset.k; if(k) press(k); });
+$('#toggleCalc').onclick = ()=>{ $('#calcWrap').style.display = $('#calcWrap').style.display? "" : "block"; };
+$('#closeCalc').onclick = ()=>{ $('#calcWrap').style.display="none"; };
+</script>
 </body>
 </html>
